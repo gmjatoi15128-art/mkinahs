@@ -1,33 +1,62 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
+import { Link } from "wouter";
+import { ArrowRight, BookOpenCheck, CalendarDays, ChevronRight, ClipboardList, GraduationCap, HeartPulse, Images, MapPinned, Newspaper, ShieldCheck } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { asObject, asObjectArray, asString, dateLabel, settingMap } from "@/lib/content";
+import { EmptyNotice, PublicLayout } from "@/components/PublicLayout";
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
+  const { data, isLoading } = trpc.public.snapshot.useQuery();
+  const settings = settingMap(data?.settings);
+  const hero = asObject(settings.hero);
+  const about = asObject(settings.homepage_about);
+  const contact = asObject(settings.contact);
+  const homePage = data?.pages.find(page => page.slug === "home");
+  const homepageSections = asObject(homePage?.sections);
+  const trustItems = asObjectArray(homepageSections.trustItems);
+  const benefitItems = asObjectArray(homepageSections.benefitItems);
+  const leadership = asObject(homepageSections.leadership);
+  const headline = asString(hero.headline, "Begin Your Journey in Nursing");
+  const heroDescription = asString(hero.description, "Admissions and programme information is published here when confirmed.");
+  const sections = data?.pages ?? [];
+  const pageSection = (slug: string) => asObject(sections.find(page => page.slug === slug)?.sections);
+  const clinical = pageSection("clinical-training");
+  const studentLife = pageSection("student-life");
+  const gallery = data?.galleryImages ?? [];
+  const upcomingEvents = (data?.events ?? []).filter(event => event.eventStatus === "upcoming").slice(0, 3);
+  const latestNews = (data?.news ?? []).slice(0, 3);
 
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
+  return <PublicLayout settings={data?.settings} seo={data?.seo} title="Home">
+    <main>
+      <section className="hero-surface overflow-hidden"><div className="container relative grid min-h-[570px] items-center gap-10 py-20 lg:grid-cols-[1.2fr_.8fr] lg:py-24"><div className="relative z-10"><p className="eyebrow text-teal-200">{asString(hero.eyebrow, "Nursing & Allied Health Education")}</p><h1 className="mt-5 max-w-3xl text-balance text-5xl font-extrabold tracking-tight text-white sm:text-6xl">{headline}</h1><p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">{heroDescription}</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/programs" className="btn-gold">{asString(hero.primaryCtaLabel, "Explore Programs")} <ArrowRight className="h-4 w-4" /></Link><Link href="/admissions" className="btn-ghost-light">{asString(hero.secondaryCtaLabel, "Admissions Information")}</Link></div></div><div className="relative mx-auto hidden w-full max-w-sm lg:block"><div className="absolute -inset-8 rounded-full bg-teal-400/15 blur-3xl" /><div className="relative rounded-[2rem] border border-white/15 bg-white/10 p-7 backdrop-blur-sm"><div className="grid h-[330px] place-items-center rounded-2xl border border-dashed border-white/25 bg-navy/50 text-center"><HeartPulse className="h-12 w-12 text-gold-300" /><p className="max-w-xs text-sm leading-6 text-slate-200">Hero imagery can be uploaded and published in the CMS when approved.</p></div></div></div></div></section>
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
-  );
+      <section className="border-b border-slate-200 bg-white"><div className="container py-5">{trustItems.length ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{trustItems.map((item, index) => <TrustItem key={`${asString(item.title)}-${index}`} icon={index % 3 === 0 ? ShieldCheck : index % 3 === 1 ? BookOpenCheck : HeartPulse} title={asString(item.title)} />)}</div> : <p className="text-center text-sm text-slate-600">Institutional highlights are published here when confirmed.</p>}</div></section>
+
+      <section className="public-section"><div className="container grid items-center gap-10 lg:grid-cols-[.8fr_1.2fr]"><div className="rounded-3xl bg-slate-100 p-8"><GraduationCap className="h-12 w-12 text-teal-700" /><p className="mt-16 max-w-xs text-sm leading-6 text-slate-600">Supporting institutional imagery is managed through the CMS.</p></div><div><p className="eyebrow">About MK Institute</p><h2 className="section-title">{asString(about.title, "About MK Institute")}</h2><p className="section-copy">{asString(about.description, "Institute information will be updated by the administrator.")}</p><Link href="/about" className="text-link">{asString(about.ctaLabel, "Learn More")} <ArrowRight className="h-4 w-4" /></Link></div></div></section>
+
+      <section className="public-section bg-slate-50"><div className="container"><SectionIntro eyebrow="Academic pathways" title="Programs" description="Explore published programme information, eligibility, duration, and learning pathways." link={{ href: "/programs", label: "View all programs" }} />{isLoading ? <LoadingGrid /> : data?.programs?.length ? <div className="mt-10 flex snap-x gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:overflow-visible">{data.programs.map(program => <article key={program.id} className="program-card min-w-[280px] snap-start"><p className="eyebrow">{program.category || "Programme"}</p><h3 className="mt-4 text-xl font-bold text-navy">{program.name}</h3><dl className="mt-5 grid gap-2 text-sm"><div className="flex justify-between gap-4"><dt className="text-slate-500">Duration</dt><dd className="text-right font-semibold text-slate-700">{program.duration || "To be confirmed"}</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">Eligibility</dt><dd className="max-w-[60%] text-right font-semibold text-slate-700">{program.eligibility || "To be confirmed"}</dd></div></dl><p className="mt-5 line-clamp-3 text-sm leading-6 text-slate-600">{program.overview || "Detailed programme information will be published by the administration."}</p><Link className="text-link mt-6" href={`/programs/${program.slug}`}>View details <ChevronRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-10"><EmptyNotice title="Programme information will be updated" description="Published programmes will appear here once the administration has added confirmed details." /></div>}</div></section>
+
+      <section className="public-section"><div className="container"><SectionIntro eyebrow="Institutional priorities" title="Why choose MK" description="Published institutional priorities and learning-support information." /> <div className="mt-10">{benefitItems.length ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{benefitItems.map((item, index) => <article key={`${asString(item.title)}-${index}`} className="program-card"><ShieldCheck className="h-6 w-6 text-teal-700" /><h3 className="mt-6 text-lg font-bold text-navy">{asString(item.title)}</h3><p className="mt-3 text-sm leading-6 text-slate-600">{asString(item.description)}</p></article>)}</div> : <EmptyNotice title="Institutional priorities will be published" description="This section is CMS-controlled so it only presents confirmed information." />}</div></div></section>
+
+      <FeatureSection eyebrow="Learning in practice" title="Clinical training" description={asString(homepageSections.clinicalTrainingDescription, asString(clinical.description, "Clinical training information will be published after it has been confirmed by the administration."))} icon={HeartPulse} href="/clinical-training" label="View clinical training" hasContent={Boolean(homepageSections.clinicalTrainingDescription) || Boolean(clinical.description)} />
+      <FeatureSection eyebrow="Learning environments" title="Campus & facilities" description={asString(homepageSections.facilitiesDescription, "Facility information is shown here when published on the Home page by the administration.")} icon={MapPinned} href="/facilities" label="Explore campus" hasContent={Boolean(homepageSections.facilitiesDescription)} reverse />
+      <FeatureSection eyebrow="Leadership" title={asString(leadership.title, "Principal / leadership")} description={asString(leadership.message, "Leadership information is published by the administration when available.")} icon={GraduationCap} href="/about" label="Learn about MK" hasContent={Boolean(leadership.title) || Boolean(leadership.message)} />
+      <FeatureSection eyebrow="Community" title="Student life" description={asString(homepageSections.studentLifeDescription, asString(studentLife.description, "Student activities and campus-life information will be published when verified."))} icon={Images} href="/student-life" label="Explore student life" hasContent={Boolean(homepageSections.studentLifeDescription) || Boolean(studentLife.description)} reverse />
+
+      <section className="public-section bg-slate-50"><div className="container"><SectionIntro eyebrow="Information hub" title="Latest news & notices" description="Read officially published notices, academic information, and announcements." link={{ href: "/news", label: "View all news" }} />{latestNews.length ? <div className="mt-10 grid gap-5 md:grid-cols-3">{latestNews.map(article => <article key={article.id} className="news-card"><p className="eyebrow">{article.category}</p><p className="mt-3 text-sm text-slate-500">{dateLabel(article.publishedAt)}</p><h3 className="mt-2 text-lg font-bold text-navy">{article.title}</h3><p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{article.excerpt || "Details will be available in the official notice."}</p><Link href={`/news/${article.slug}`} className="text-link mt-5">View details <ChevronRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-10"><EmptyNotice title="No notices have been published" description="Official notices and updates will appear here when published." /></div>}</div></section>
+
+      <section className="public-section"><div className="container"><SectionIntro eyebrow="Calendar" title="Upcoming events" description="Event information is published when it is confirmed." link={{ href: "/events", label: "View all events" }} />{upcomingEvents.length ? <div className="mt-10 grid gap-5 md:grid-cols-3">{upcomingEvents.map(event => <article key={event.id} className="news-card"><CalendarDays className="h-6 w-6 text-teal-700" /><p className="mt-5 text-sm text-slate-500">{dateLabel(event.startsAt)}</p><h3 className="mt-2 text-lg font-bold text-navy">{event.title}</h3><p className="mt-3 text-sm text-slate-600">{event.location || "Location to be announced"}</p><Link href={`/events/${event.slug}`} className="text-link mt-5">View event <ChevronRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-10"><EmptyNotice title="No upcoming events" description="There are no published upcoming events at present." /></div>}</div></section>
+
+      <section className="public-section bg-slate-50"><div className="container"><SectionIntro eyebrow="Campus moments" title="Gallery" description="Browse published images from the institute." link={{ href: "/gallery", label: "View gallery" }} />{gallery.length ? <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">{gallery.slice(0, 8).map(image => <img key={image.id} src={image.mediaUrl} loading="lazy" alt={image.altText || image.caption || "Gallery image"} className="aspect-square rounded-2xl object-cover shadow-sm" />)}</div> : <div className="mt-10"><EmptyNotice title="Gallery images will be published" /></div>}</div></section>
+
+      <section className="container py-10"><div className="admissions-panel"><div><p className="eyebrow text-gold-200">Admissions</p><h2 className="mt-4 text-3xl font-extrabold text-white">Begin Your Journey in Nursing</h2><p className="mt-4 max-w-xl leading-7 text-slate-200">Admissions information is shared as soon as it is confirmed by the administration.</p></div><div className="flex flex-col gap-3 sm:flex-row"><Link className="btn-gold" href="/admissions">Admissions Information <ArrowRight className="h-4 w-4" /></Link><Link className="btn-ghost-light" href="/contact">Contact Admissions</Link></div></div></section>
+
+      <section className="public-section"><div className="container grid gap-8 lg:grid-cols-[.8fr_1.2fr]"><div><p className="eyebrow">Contact & location</p><h2 className="section-title">Plan your visit</h2><p className="section-copy">Address, office hours, and contact channels are managed by the administration.</p></div><div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm"><div className="grid gap-4 text-sm"><ContactLine label="Address" value={asString(contact.address, "Address details pending")} /><ContactLine label="Phone" value={asString(contact.phone, "Phone details pending")} /><ContactLine label="Email" value={asString(contact.email, "Email details pending")} /><ContactLine label="Office hours" value={asString(contact.officeHours, "Office hours pending")} /></div><Link href="/contact" className="text-link mt-7">View contact information <ArrowRight className="h-4 w-4" /></Link></div></div></section>
+    </main>
+  </PublicLayout>;
 }
+
+function TrustItem({ icon: Icon, title }: { icon: typeof ShieldCheck; title: string }) { return <div className="flex items-center gap-3 rounded-xl px-3 py-2"><Icon className="h-5 w-5 text-teal-700" /><span className="text-sm font-semibold text-navy">{title}</span></div>; }
+function ContactLine({ label, value }: { label: string; value: string }) { return <div className="flex justify-between gap-4 border-b border-slate-100 pb-3 last:border-0"><span className="text-slate-500">{label}</span><span className="max-w-[65%] text-right font-semibold text-slate-700">{value}</span></div>; }
+function LoadingGrid() { return <div className="mt-10 grid gap-5 md:grid-cols-3">{[0, 1, 2].map(item => <div key={item} className="h-64 animate-pulse rounded-2xl bg-slate-200" />)}</div>; }
+function SectionIntro({ eyebrow, title, description, link }: { eyebrow: string; title: string; description: string; link?: { href: string; label: string } }) { return <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="eyebrow">{eyebrow}</p><h2 className="section-title">{title}</h2><p className="section-copy">{description}</p></div>{link ? <Link href={link.href} className="text-link shrink-0">{link.label} <ArrowRight className="h-4 w-4" /></Link> : null}</div>; }
+function FeatureSection({ eyebrow, title, description, icon: Icon, href, label, hasContent, reverse }: { eyebrow: string; title: string; description: string; icon: typeof HeartPulse; href: string; label: string; hasContent: boolean; reverse?: boolean }) { return <section className="public-section"><div className={`container grid items-center gap-10 lg:grid-cols-2 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}><div className="rounded-3xl bg-navy p-10 text-white"><Icon className="h-10 w-10 text-gold-300" /><div className="mt-16 rounded-2xl border border-white/15 bg-white/5 p-5 text-sm leading-6 text-slate-300">{hasContent ? "Published information is available through the linked page." : "This section remains intentionally limited until verified information is published."}</div></div><div><p className="eyebrow">{eyebrow}</p><h2 className="section-title">{title}</h2><p className="section-copy">{description}</p><Link href={href} className="text-link">{label} <ArrowRight className="h-4 w-4" /></Link></div></div></section>; }

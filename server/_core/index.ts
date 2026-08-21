@@ -8,6 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { getPublicSnapshot } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -36,6 +37,22 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  app.get("/robots.txt", (_req, res) => {
+    res.type("text/plain").send("User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: /sitemap.xml\n");
+  });
+  app.get("/sitemap.xml", async (req, res) => {
+    const snapshot = await getPublicSnapshot();
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const staticPaths = ["", "/about", "/programs", "/admissions", "/faculty", "/facilities", "/clinical-training", "/student-life", "/gallery", "/news", "/events", "/downloads", "/contact"];
+    const dynamicPaths = [
+      ...snapshot.programs.map(item => `/programs/${item.slug}`),
+      ...snapshot.faculty.map(item => `/faculty/${item.slug}`),
+      ...snapshot.news.map(item => `/news/${item.slug}`),
+      ...snapshot.events.map(item => `/events/${item.slug}`),
+    ];
+    const urls = [...staticPaths, ...dynamicPaths].map(path => `<url><loc>${baseUrl}${path}</loc></url>`).join("");
+    res.type("application/xml").send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`);
+  });
   // tRPC API
   app.use(
     "/api/trpc",

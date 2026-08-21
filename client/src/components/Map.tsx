@@ -76,7 +76,7 @@
 
 /// <reference types="@types/google.maps" />
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePersistFn } from "@/hooks/usePersistFn";
 import { cn } from "@/lib/utils";
 
@@ -93,17 +93,22 @@ const FORGE_BASE_URL =
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
 
 function loadMapScript() {
-  return new Promise(resolve => {
+  return new Promise<boolean>(resolve => {
+    if (window.google?.maps) {
+      resolve(true);
+      return;
+    }
     const script = document.createElement("script");
     script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
     script.async = true;
     script.crossOrigin = "anonymous";
     script.onload = () => {
-      resolve(null);
+      resolve(true);
       script.remove(); // Clean up immediately
     };
     script.onerror = () => {
-      console.error("Failed to load Google Maps script");
+      script.remove();
+      resolve(false);
     };
     document.head.appendChild(script);
   });
@@ -124,11 +129,12 @@ export function MapView({
 }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
+  const [failed, setFailed] = useState(false);
 
   const init = usePersistFn(async () => {
-    await loadMapScript();
-    if (!mapContainer.current) {
-      console.error("Map container not found");
+    const loaded = await loadMapScript();
+    if (!loaded || !mapContainer.current || !window.google?.maps) {
+      setFailed(true);
       return;
     }
     map.current = new window.google.maps.Map(mapContainer.current, {
@@ -149,7 +155,9 @@ export function MapView({
     init();
   }, [init]);
 
-  return (
-    <div ref={mapContainer} className={cn("w-full h-[500px]", className)} />
-  );
+  if (failed) {
+    return <div className={cn("grid h-[500px] place-items-center bg-slate-100 p-6 text-center text-sm text-slate-600", className)}>The map is temporarily unavailable. Please use the directions link or contact the institute for visit information.</div>;
+  }
+
+  return <div ref={mapContainer} className={cn("w-full h-[500px]", className)} />;
 }

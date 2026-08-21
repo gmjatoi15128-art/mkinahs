@@ -1,0 +1,21 @@
+# Project TODO
+
+- [x] Define CMS schema for site settings, pages, programs, faculty, facilities, clinical training, affiliations, gallery, news, events, downloads, and SEO metadata.
+- [x] Create secure role model for Super Admin and Content Manager with route and procedure protection.
+- [x] Implement reusable database queries and tRPC procedures for published public content and privileged CMS management.
+- [x] Implement a premium responsive global public layout with sticky header, editable contact bar, prominent admissions CTA, footer, and mobile action bar.
+- [x] Build CMS-driven homepage sections with honest empty states whenever content is not published.
+- [x] Build all requested public routes, dynamic detail views, informational admissions flow, gallery lightbox, and contact experience.
+- [x] Build the authenticated admin dashboard using the provided dashboard layout and reusable content management interfaces.
+- [x] Add S3-backed media upload handling and metadata references without storing binary data in the database.
+- [x] Add SEO controls, public metadata, sitemap, robots directives, and appropriate structured data.
+- [x] Add accessible interaction states, mobile behavior, restrained animations, and no-horizontal-overflow safeguards.
+- [x] Write and run Vitest coverage for access controls and public-content filtering.
+- [x] Verify the rendered website at desktop and mobile sizes, review logs, and correct defects.
+- [x] Save a verified project checkpoint and deliver the project version for review.
+- [x] Wire the editable top-bar location and social links from SiteSettings, without public fallback claims.
+- [x] Make the trust strip, benefits, leadership, facilities, and student-life homepage sections render only published CMS page blocks.
+- [x] Expand the About and Student Life templates into structured CMS-driven public page experiences.
+- [x] Apply page SEO settings to canonical, Open Graph, and index/no-index head metadata at render time.
+- [x] Add public-content filtering test coverage for unpublished dynamic detail records.
+- [x] Replace the map script failure path with a calm, non-error contact-map fallback.
