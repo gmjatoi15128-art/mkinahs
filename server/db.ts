@@ -40,7 +40,7 @@ export function publishedOnly<T extends { status: ContentStatus }>(records: T[])
 }
 
 export function publishedDetail<T extends { status: ContentStatus }>(record: T | undefined) {
-  return record?.status === "published" ? record : undefined;
+  return record?.status === "published" ? record : null;
 }
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -117,7 +117,7 @@ export async function getPublicSnapshot() {
 
 export async function findPublishedBySlug(type: "program" | "faculty" | "news" | "event", slug: string): Promise<any> {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) return null;
   const published = "published" as const;
   if (type === "program") return publishedDetail((await db.select().from(programs).where(and(eq(programs.slug, slug), eq(programs.status, published))).limit(1))[0]);
   if (type === "faculty") return publishedDetail((await db.select().from(faculty).where(and(eq(faculty.slug, slug), eq(faculty.status, published))).limit(1))[0]);

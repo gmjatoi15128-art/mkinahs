@@ -12,8 +12,8 @@ describe("public content visibility safeguards", () => {
 
   it("withholds non-published dynamic detail records at runtime", () => {
     expect(publishedDetail({ id: 1, status: "published" as const })).toEqual({ id: 1, status: "published" });
-    expect(publishedDetail({ id: 2, status: "draft" as const })).toBeUndefined();
-    expect(publishedDetail({ id: 3, status: "scheduled" as const })).toBeUndefined();
-    expect(publishedDetail({ id: 4, status: "archived" as const })).toBeUndefined();
+    expect(publishedDetail({ id: 2, status: "draft" as const })).toBeNull();
+    expect(publishedDetail({ id: 3, status: "scheduled" as const })).toBeNull();
+    expect(publishedDetail({ id: 4, status: "archived" as const })).toBeNull();
   });
 });

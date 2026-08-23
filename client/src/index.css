@@ -44,6 +44,7 @@
   --color-teal-300: oklch(0.73 0.12 187);
   --color-teal-600: oklch(0.52 0.105 188);
   --color-teal-700: oklch(0.43 0.09 190);
+  --font-serif: "Libre Baskerville", Georgia, serif;
 }
 
 :root {
@@ -89,7 +90,7 @@
   .container { width: 100%; margin-inline: auto; padding-inline: 1rem; }
   .flex { min-width: 0; min-height: 0; }
   .eyebrow { @apply text-xs font-bold uppercase tracking-[0.17em] text-teal-700; }
-  .section-title { @apply mt-3 text-balance text-3xl font-extrabold tracking-tight text-navy sm:text-4xl; }
+  .section-title { @apply mt-3 font-serif text-balance text-3xl font-bold leading-tight tracking-[-0.035em] text-navy sm:text-4xl; }
   .section-copy { @apply mt-4 max-w-2xl text-base leading-7 text-slate-600; }
   .public-section { @apply py-16 sm:py-20; }
   .nav-link { @apply whitespace-nowrap text-sm font-semibold text-slate-600 transition-colors hover:text-navy; }
@@ -99,9 +100,11 @@
   .btn-secondary { @apply inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-teal-600 hover:bg-teal-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600 active:scale-[0.98]; }
   .btn-ghost-light { @apply inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98]; }
   .text-link { @apply inline-flex items-center gap-2 text-sm font-bold text-teal-700 transition hover:text-navy; }
-  .program-card { @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-1 hover:border-teal-200 hover:shadow-[0_18px_35px_rgba(15,23,42,0.08)]; }
+  .program-card { @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.04)] transition duration-200 hover:-translate-y-1 hover:border-teal-200 hover:shadow-[0_18px_35px_rgba(15,23,42,0.08)]; }
+  .program-card::before { content: ""; @apply absolute inset-x-0 top-0 h-1 bg-teal-600; }
   .news-card { @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.04)]; }
-  .hero-surface { background: radial-gradient(circle at 75% 30%, oklch(0.42 0.085 212 / 0.75), transparent 32%), linear-gradient(135deg, oklch(0.19 0.05 255), oklch(0.26 0.065 250)); }
+  .hero-surface { position: relative; background: radial-gradient(circle at 76% 28%, oklch(0.42 0.085 212 / 0.75), transparent 32%), linear-gradient(135deg, oklch(0.19 0.05 255), oklch(0.26 0.065 250)); }
+  .hero-surface::before, .page-hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .24; background-image: linear-gradient(135deg, transparent 48%, oklch(0.78 0.13 80 / .32) 49%, transparent 50%), repeating-linear-gradient(90deg, transparent 0, transparent 44px, oklch(1 0 0 / .04) 45px); background-size: 170px 170px, 90px 90px; }
   .page-hero { @apply relative overflow-hidden bg-navy py-20 sm:py-24; background-image: radial-gradient(circle at 75% 30%, oklch(0.48 0.1 200 / .48), transparent 32%); }
   .admissions-panel { @apply flex flex-col justify-between gap-8 rounded-3xl bg-navy px-7 py-9 sm:px-10 lg:flex-row lg:items-center; background-image: linear-gradient(135deg, transparent, oklch(0.45 0.09 195 / .34)); }
   .footer-heading { @apply text-sm font-bold uppercase tracking-[0.14em] text-gold-200; }
@@ -110,6 +113,35 @@
   .field-input { @apply h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-3 focus:ring-teal-200/50; }
   .filter-chip { @apply rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-teal-600 hover:text-navy; }
   .filter-chip-active { @apply border-navy bg-navy text-white hover:border-navy hover:text-white; }
+  .institutional-notice { @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 px-6 py-7 text-center; }
+  .institutional-notice::before { content: ""; @apply absolute inset-x-0 top-0 h-1 bg-gold-300; }
+  .institutional-notice svg { @apply relative z-10 text-teal-700; }
+  .institutional-notice h3, .institutional-notice p { @apply relative z-10; }
+  .institutional-notice--academic { background-image: linear-gradient(120deg, oklch(0.97 0.025 200), oklch(0.99 0.012 85)); }
+  .institutional-notice--academic::after { content: ""; @apply absolute -right-8 -top-8 h-28 w-28 rounded-full border border-teal-200/70; }
+  .institutional-notice--faculty { background-image: linear-gradient(120deg, oklch(0.975 0.014 250), oklch(0.99 0.012 85)); }
+  .institutional-notice--faculty::after { content: ""; @apply absolute bottom-0 right-8 h-16 w-16 rounded-t-full border-x border-t border-gold-200/70; }
+  .institutional-notice--gallery { background-image: radial-gradient(circle at 12% 92%, oklch(0.84 0.08 190 / .22), transparent 28%), linear-gradient(120deg, oklch(0.975 0.02 180), oklch(0.99 0.014 85)); }
+  .institutional-notice--news { background-image: linear-gradient(120deg, oklch(0.97 0.02 240), oklch(0.99 0.012 85)); }
+  .institutional-notice--news::after { content: ""; @apply absolute right-10 top-6 h-14 w-14 rotate-12 rounded-sm border border-teal-200/70; }
+  .institutional-notice--events { background-image: linear-gradient(120deg, oklch(0.98 0.028 85), oklch(0.99 0.014 200)); }
+  .institutional-notice--events::after { content: ""; @apply absolute bottom-0 right-10 h-16 w-24 rounded-t-full border-x border-t border-gold-200/70; }
+  .institutional-notice--documents { background-image: linear-gradient(120deg, oklch(0.975 0.02 240), oklch(0.99 0.012 85)); }
+  .academic-display { @apply font-serif font-bold tracking-[-0.035em]; }
+  .hub-guide { @apply border-b border-slate-200 bg-white; }
+  .hub-guide__inner { @apply grid gap-5 py-5 lg:grid-cols-[1.15fr_1.4fr_2.45fr] lg:items-center; }
+  .hub-guide__identity { @apply flex items-center gap-3; }
+  .hub-guide__icon { @apply grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-teal-50 text-teal-700; }
+  .hub-guide__summary { @apply max-w-md text-sm leading-6 text-slate-600; }
+  .hub-guide__steps { @apply grid gap-2 text-xs leading-5 text-slate-600 sm:grid-cols-3 sm:gap-0; }
+  .hub-guide__steps li { @apply flex items-start gap-2 sm:border-l sm:border-slate-200 sm:px-4; }
+  .hub-guide__steps span { color: oklch(0.72 0.13 80); @apply shrink-0 font-bold; }
+  .hub-guide--programs .hub-guide__icon { @apply bg-teal-50; }
+  .hub-guide--faculty .hub-guide__icon { @apply bg-sky-50 text-sky-700; }
+  .hub-guide--news-notices .hub-guide__icon { @apply bg-indigo-50 text-indigo-700; }
+  .hub-guide--events .hub-guide__icon { @apply bg-amber-50 text-amber-700; }
+  .hub-guide--gallery .hub-guide__icon { @apply bg-emerald-50 text-emerald-700; }
+  .hub-guide--downloads .hub-guide__icon { @apply bg-violet-50 text-violet-700; }
 }
 
 @media (min-width: 640px) { .container { padding-inline: 1.5rem; } }

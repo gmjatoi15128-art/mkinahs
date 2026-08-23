@@ -19,3 +19,23 @@
 - [x] Apply page SEO settings to canonical, Open Graph, and index/no-index head metadata at render time.
 - [x] Add public-content filtering test coverage for unpublished dynamic detail records.
 - [x] Replace the map script failure path with a calm, non-error contact-map fallback.
+- [x] Audit every public route for rendering defects, broken interactions, content-system gaps, responsiveness, and accessibility.
+- [x] Audit the secure CMS for role behavior, content-management workflows, form validation, state handling, and usability defects.
+- [x] Audit and improve technical SEO, metadata, structured data, canonical behavior, sitemap coverage, and crawler directives.
+- [x] Correct all identified functional, content-model, runtime, and responsive-design issues.
+- [x] Refine public and administrative visual systems into a polished, credible university-standard experience.
+- [x] Write and run regression tests for repaired behaviors, verify desktop and mobile interfaces, and save a new checkpoint.
+- [x] Serve route-specific SEO metadata and structured data in the initial HTML for public crawler requests.
+- [x] Replace remaining provisional public fallback language across news, event, download, and detail routes.
+- [x] Differentiate secondary public pages with stronger university-specific layout patterns and re-audit all public routes.
+- [x] Replace remaining Program and Faculty provisional fallback language and rescan public-facing page copy.
+- [x] Further differentiate Programs, Faculty, News, Events, Gallery, and Downloads with page-specific visual structures.
+- [x] Run and document a final visual audit covering every public route after the refinements.
+- [x] Add more distinct page-specific visual patterns to Programs, Faculty, News, Events, Gallery, and Downloads.
+- [x] Perform a final post-refinement visual audit covering every public list route and valid dynamic detail route.
+- [x] Add substantive page-specific layout structures for Programs, Faculty, News, Events, Gallery, and Downloads beyond shared empty states.
+- [ ] Verify valid dynamic detail routes only after real, approved CMS records are published; do not fabricate institutional records for testing.
+- [x] Build genuinely distinct page-specific directory layouts beyond shared rails and empty states for Programs, Faculty, News, Events, Gallery, and Downloads.
+- [x] Re-audit all public list and approved dynamic-detail routes after the distinct page-layout work is complete.
+- [ ] Validate valid Program, Faculty, News, and Event detail routes using approved published CMS records when they become available; do not fabricate records.
+- [x] Save the audited public-site, CMS, SEO, and layout refinements in a new checkpoint for review.

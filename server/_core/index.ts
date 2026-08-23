@@ -10,6 +10,21 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { getPublicSnapshot } from "../db";
 
+function xmlEscape(value: string) {
+  return value.replace(/[<>&'\"]/g, character => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", "\"": "&quot;" })[character] || character);
+}
+
+function publicBaseUrl(req: express.Request) {
+  const configured = process.env.PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
+  if (configured) return configured;
+  const protocol = String(req.headers["x-forwarded-proto"] || req.protocol).split(",")[0] || "https";
+  return `${protocol}://${req.get("host")}`;
+}
+
+function isoDate(value: Date | null | undefined) {
+  return value ? value.toISOString() : undefined;
+}
+
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
     const server = net.createServer();
@@ -31,26 +46,28 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+  app.set("trust proxy", 1);
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
-  app.get("/robots.txt", (_req, res) => {
-    res.type("text/plain").send("User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: /sitemap.xml\n");
+  app.get("/robots.txt", (req, res) => {
+    res.type("text/plain").send(`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${publicBaseUrl(req)}/sitemap.xml\n`);
   });
   app.get("/sitemap.xml", async (req, res) => {
     const snapshot = await getPublicSnapshot();
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const baseUrl = publicBaseUrl(req);
     const staticPaths = ["", "/about", "/programs", "/admissions", "/faculty", "/facilities", "/clinical-training", "/student-life", "/gallery", "/news", "/events", "/downloads", "/contact"];
-    const dynamicPaths = [
-      ...snapshot.programs.map(item => `/programs/${item.slug}`),
-      ...snapshot.faculty.map(item => `/faculty/${item.slug}`),
-      ...snapshot.news.map(item => `/news/${item.slug}`),
-      ...snapshot.events.map(item => `/events/${item.slug}`),
+    const staticUrls = staticPaths.map(path => ({ path, lastModified: undefined }));
+    const dynamicUrls = [
+      ...snapshot.programs.map(item => ({ path: `/programs/${item.slug}`, lastModified: isoDate(item.updatedAt) })),
+      ...snapshot.faculty.map(item => ({ path: `/faculty/${item.slug}`, lastModified: isoDate(item.updatedAt) })),
+      ...snapshot.news.map(item => ({ path: `/news/${item.slug}`, lastModified: isoDate(item.updatedAt) || isoDate(item.publishedAt) })),
+      ...snapshot.events.map(item => ({ path: `/events/${item.slug}`, lastModified: isoDate(item.updatedAt) || isoDate(item.publishedAt) })),
     ];
-    const urls = [...staticPaths, ...dynamicPaths].map(path => `<url><loc>${baseUrl}${path}</loc></url>`).join("");
+    const urls = [...staticUrls, ...dynamicUrls].map(({ path, lastModified }) => `<url><loc>${xmlEscape(`${baseUrl}${path}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ""}</url>`).join("");
     res.type("application/xml").send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`);
   });
   // tRPC API
