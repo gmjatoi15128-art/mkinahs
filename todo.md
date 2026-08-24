@@ -67,3 +67,5 @@
 - [x] Replace remaining common ContentWorkspace metadata JSON with guided typed fields, reserving JSON only for rare advanced cases.
 - [x] Visually validate the repaired Settings, Accounts, guided content, and guided page screens before the final checkpoint.
 - [x] Keep CMS section state synchronized with direct hash changes and browser history navigation.
+- [x] Let Super Admins manage Content Manager accounts, including reviewing status and safely activating or deactivating publishing access.
+- [ ] Add regression coverage and visual validation for Super Admin account lifecycle controls, then save a checkpoint.

@@ -6,6 +6,8 @@ const mocks = vi.hoisted(() => ({
   listCmsUsers: vi.fn(),
   getCmsUserByEmail: vi.fn(),
   createCmsUser: vi.fn(),
+  setContentManagerActive: vi.fn(),
+  resetContentManagerPassword: vi.fn(),
 }));
 
 vi.mock("./db", async importOriginal => {
@@ -70,5 +72,17 @@ describe("CMS Super Admin success paths", () => {
     await expect(caller.cms.accounts.createContentManager({ name: "Content Manager", email: "MANAGER@example.invalid", password: "A sufficiently secure test password" })).resolves.toEqual(expect.not.objectContaining({ passwordHash: expect.anything() }));
     expect(mocks.getCmsUserByEmail).toHaveBeenCalledWith("manager@example.invalid");
     expect(mocks.createCmsUser).toHaveBeenCalledWith(expect.objectContaining({ name: "Content Manager", email: "manager@example.invalid", role: "content_manager", passwordHash: expect.stringContaining(":") }));
+  });
+
+  it("updates publishing access and resets a Content Manager password without exposing the hash", async () => {
+    const suspendedAccount = { ...accountRow, isActive: false };
+    mocks.setContentManagerActive.mockResolvedValue(suspendedAccount);
+    mocks.resetContentManagerPassword.mockResolvedValue(suspendedAccount);
+    const caller = appRouter.createCaller(createSuperAdminContext());
+
+    await expect(caller.cms.accounts.setContentManagerActive({ id: 32, isActive: false })).resolves.toEqual(expect.not.objectContaining({ passwordHash: expect.anything(), isActive: true }));
+    await expect(caller.cms.accounts.resetContentManagerPassword({ id: 32, password: "A fresh temporary password" })).resolves.toEqual(expect.not.objectContaining({ passwordHash: expect.anything() }));
+    expect(mocks.setContentManagerActive).toHaveBeenCalledWith(32, false);
+    expect(mocks.resetContentManagerPassword).toHaveBeenCalledWith(32, expect.stringContaining(":"));
   });
 });

@@ -35,5 +35,7 @@ describe("CMS access controls", () => {
     const caller = appRouter.createCaller(createContext("content_manager"));
     await expect(caller.cms.accounts.list()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(caller.cms.accounts.createContentManager({ name: "Blocked Account", email: "blocked@example.invalid", password: "A secure test password" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.cms.accounts.setContentManagerActive({ id: 99, isActive: false })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.cms.accounts.resetContentManagerPassword({ id: 99, password: "Another secure test password" })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 });

@@ -10,6 +10,8 @@ import {
   getPublicSnapshot,
   listCmsUsers,
   listModule,
+  resetContentManagerPassword,
+  setContentManagerActive,
   type CmsModule,
   updateModuleStatus,
   upsertSeoSetting,
@@ -176,6 +178,16 @@ export const appRouter = router({
         const email = normalizeEmail(input.email);
         if (await getCmsUserByEmail(email)) throw new Error("A CMS account with this email already exists");
         return safeUser(await createCmsUser({ name: input.name, email, passwordHash: await hashCmsPassword(input.password), role: "content_manager" }));
+      }),
+      setContentManagerActive: superAdminProcedure.input(z.object({ id: z.number().int().positive(), isActive: z.boolean() })).mutation(async ({ input }) => {
+        const account = await setContentManagerActive(input.id, input.isActive);
+        if (!account) throw new Error("Content Manager account not found");
+        return safeUser(account);
+      }),
+      resetContentManagerPassword: superAdminProcedure.input(z.object({ id: z.number().int().positive(), password: z.string().min(12).max(128) })).mutation(async ({ input }) => {
+        const account = await resetContentManagerPassword(input.id, await hashCmsPassword(input.password));
+        if (!account) throw new Error("Content Manager account not found");
+        return safeUser(account);
       }),
     }),
   }),

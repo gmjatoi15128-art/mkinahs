@@ -125,6 +125,24 @@ export async function createCmsUser(input: { name: string; email: string; passwo
   return getCmsUserByEmail(input.email);
 }
 
+export async function setContentManagerActive(id: number, isActive: boolean) {
+  const account = await getCmsUserById(id);
+  if (!account || account.loginMethod !== "cms" || account.role !== "content_manager") return undefined;
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  await db.update(users).set({ isActive }).where(eq(users.id, id));
+  return getCmsUserById(id);
+}
+
+export async function resetContentManagerPassword(id: number, passwordHash: string) {
+  const account = await getCmsUserById(id);
+  if (!account || account.loginMethod !== "cms" || account.role !== "content_manager") return undefined;
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  await db.update(users).set({ passwordHash }).where(eq(users.id, id));
+  return getCmsUserById(id);
+}
+
 export async function listCmsUsers() {
   const db = await getDb();
   if (!db) return [];
