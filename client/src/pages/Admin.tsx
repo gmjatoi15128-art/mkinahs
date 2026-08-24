@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { Archive, BookOpen, ExternalLink, FileText, FolderCog, ImagePlus, LayoutDashboard, MapPinned, Newspaper, Plus, Save, Settings2, ShieldCheck, UploadCloud, UserPlus, UsersRound } from "lucide-react";
@@ -41,6 +42,15 @@ export default function Admin() {
     const hash = window.location.hash.replace("#", "") as AdminSection;
     return ["overview", "pages", "accounts", "settings", ...modules.map(item => item.key)].includes(hash) ? hash : "overview";
   });
+  useEffect(() => {
+    const syncSectionFromUrl = () => {
+      const hash = window.location.hash.replace("#", "") as AdminSection;
+      setActive(["overview", "pages", "accounts", "settings", ...modules.map(item => item.key)].includes(hash) ? hash : "overview");
+    };
+    window.addEventListener("hashchange", syncSectionFromUrl);
+    window.addEventListener("popstate", syncSectionFromUrl);
+    return () => { window.removeEventListener("hashchange", syncSectionFromUrl); window.removeEventListener("popstate", syncSectionFromUrl); };
+  }, []);
   const overview = trpc.cms.overview.useQuery(undefined, { enabled: Boolean(user && user.role !== "user") });
   if (loading) return <div className="grid min-h-screen place-items-center text-slate-600">Loading secure CMS…</div>;
   if (!user || user.role === "user") return <div className="grid min-h-screen place-items-center bg-slate-50 p-6"><div className="max-w-md rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm"><ShieldCheck className="mx-auto h-10 w-10 text-navy" /><h1 className="mt-5 text-2xl font-bold text-navy">CMS access required</h1><p className="mt-3 text-sm leading-6 text-slate-600">Only assigned Super Admin and Content Manager accounts can access the CMS.</p></div></div>;
