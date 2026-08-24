@@ -72,3 +72,7 @@
 - [x] Visually validate a real Content Manager row in Accounts, including its status badge, suspend/reactivate action, and password-reset controls; then remove the QA account.
 - [x] Save a fresh checkpoint after completing row-level account-management validation.
 - [x] Visually validate one real Content Manager row in both active and suspended states, including the changed status badge and Reactivate publishing access control, then clean up the QA account.
+- [x] Add official contact-driven floating Call and WhatsApp actions that remain hidden until approved contact values are entered.
+- [x] Add client-side category filtering and clearer empty states to the public Download Centre without exposing unpublished documents.
+- [x] Add a Super Admin-controlled admissions and important-dates banner that remains absent until approved banner details are entered.
+- [ ] Add regression coverage, visually validate the selected public improvements, and save a checkpoint.

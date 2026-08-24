@@ -62,6 +62,15 @@ describe("CMS Super Admin success paths", () => {
     expect(mocks.upsertSiteSetting).toHaveBeenCalledWith({ key: "contact", label: "Contact details", description: "Approved public contact information", value: { email: "office@example.invalid" }, userId: 91 });
   });
 
+  it("stores the Super Admin admissions banner as a structured public setting", async () => {
+    mocks.upsertSiteSetting.mockResolvedValue({ id: 8, key: "admissions_banner" });
+    const caller = appRouter.createCaller(createSuperAdminContext());
+    const value = { enabled: true, eyebrow: "Admissions update", title: "Approved title", message: "Approved message", ctaLabel: "Learn more", ctaUrl: "/admissions" };
+
+    await expect(caller.cms.settings.upsert({ key: "admissions_banner", label: "Admissions and important dates banner", description: "Super Admin-controlled public banner", value })).resolves.toEqual({ id: 8, key: "admissions_banner" });
+    expect(mocks.upsertSiteSetting).toHaveBeenCalledWith({ key: "admissions_banner", label: "Admissions and important dates banner", description: "Super Admin-controlled public banner", value, userId: 91 });
+  });
+
   it("lists and creates Content Manager accounts without exposing password hashes", async () => {
     mocks.listCmsUsers.mockResolvedValue([accountRow]);
     mocks.getCmsUserByEmail.mockResolvedValue(null);
