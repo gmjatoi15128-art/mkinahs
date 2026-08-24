@@ -75,4 +75,6 @@
 - [x] Add official contact-driven floating Call and WhatsApp actions that remain hidden until approved contact values are entered.
 - [x] Add client-side category filtering and clearer empty states to the public Download Centre without exposing unpublished documents.
 - [x] Add a Super Admin-controlled admissions and important-dates banner that remains absent until approved banner details are entered.
-- [ ] Add regression coverage, visually validate the selected public improvements, and save a checkpoint.
+- [x] Add regression coverage, visually validate the selected public improvements, and save a checkpoint.
+- [x] Add automated regression coverage for conditional contact actions, Download Centre filtering and empty states, and admissions-banner visibility rules.
+- [ ] Re-run checks and tests after public-behavior coverage, then save a fresh checkpoint.
