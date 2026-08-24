@@ -78,3 +78,5 @@
 - [x] Add regression coverage, visually validate the selected public improvements, and save a checkpoint.
 - [x] Add automated regression coverage for conditional contact actions, Download Centre filtering and empty states, and admissions-banner visibility rules.
 - [x] Re-run checks and tests after public-behavior coverage, then save a fresh checkpoint.
+- [x] Add a site-wide press-release ticker that lists only currently published News & Notices records and remains hidden when none are available.
+- [ ] Add ticker regression coverage, responsive validation, and a release checkpoint.

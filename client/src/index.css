@@ -148,3 +148,9 @@
 @media (min-width: 1024px) { .container { max-width: 1280px; padding-inline: 2rem; } }
 @media (prefers-reduced-motion: no-preference) { .public-section { animation: rise-in .45s cubic-bezier(.23,1,.32,1) both; } @keyframes rise-in { from { opacity: .01; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+.press-ticker-track { display: flex; min-width: max-content; animation: press-ticker-scroll 32s linear infinite; }
+.press-ticker-item { display: inline-flex; align-items: center; white-space: nowrap; padding-right: 3rem; font-size: .8125rem; font-weight: 700; color: oklch(0.38 0.025 255); }
+.press-ticker-item:hover { color: oklch(0.43 0.09 190); }
+@keyframes press-ticker-scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .press-ticker-track { animation: none; } }

@@ -1,4 +1,5 @@
 export type DownloadFilterRecord = { category?: string | null };
+export type PressReleaseRecord = { id: number; title?: string | null; slug?: string | null; category?: string | null; status?: string | null };
 
 export function hasApprovedContactAction(phone?: string | null, whatsapp?: string | null) {
   return Boolean(phone?.trim() || whatsapp?.trim());
@@ -13,4 +14,8 @@ export function shouldShowAdmissionsBanner(value: Record<string, unknown>) {
 
 export function filterDownloadsByCategory<T extends DownloadFilterRecord>(downloads: T[], category: string) {
   return category === "all" ? downloads : downloads.filter(document => document.category === category);
+}
+
+export function selectPressReleases<T extends PressReleaseRecord>(records: T[]) {
+  return records.filter(record => (!record.status || record.status === "published") && Boolean(record.title?.trim() && record.slug?.trim())).slice(0, 5);
 }

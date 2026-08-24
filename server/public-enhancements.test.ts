@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterDownloadsByCategory, hasApprovedContactAction, shouldShowAdmissionsBanner } from "../client/src/lib/publicEnhancements";
+import { filterDownloadsByCategory, hasApprovedContactAction, selectPressReleases, shouldShowAdmissionsBanner } from "../client/src/lib/publicEnhancements";
 
 describe("selected public-site enhancements", () => {
   it("only enables public contact actions when an approved call or WhatsApp value exists", () => {
@@ -20,5 +20,15 @@ describe("selected public-site enhancements", () => {
     expect(filterDownloadsByCategory(downloads, "all")).toHaveLength(3);
     expect(filterDownloadsByCategory(downloads, "Prospectus").map(document => document.id)).toEqual([1, 3]);
     expect(filterDownloadsByCategory(downloads, "Notices")).toEqual([]);
+  });
+
+  it("selects only valid published notices for the press-release ticker", () => {
+    const notices = [
+      { id: 1, status: "published", title: "Published notice", slug: "published-notice" },
+      { id: 2, status: "draft", title: "Draft notice", slug: "draft-notice" },
+      { id: 3, status: "published", title: "", slug: "missing-title" },
+      { id: 4, title: "Published snapshot record", slug: "snapshot-record" },
+    ];
+    expect(selectPressReleases(notices).map(notice => notice.id)).toEqual([1, 4]);
   });
 });
