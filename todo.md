@@ -68,4 +68,7 @@
 - [x] Visually validate the repaired Settings, Accounts, guided content, and guided page screens before the final checkpoint.
 - [x] Keep CMS section state synchronized with direct hash changes and browser history navigation.
 - [x] Let Super Admins manage Content Manager accounts, including reviewing status and safely activating or deactivating publishing access.
-- [ ] Add regression coverage and visual validation for Super Admin account lifecycle controls, then save a checkpoint.
+- [x] Add regression coverage and visual validation for Super Admin account lifecycle controls, then save a checkpoint.
+- [x] Visually validate a real Content Manager row in Accounts, including its status badge, suspend/reactivate action, and password-reset controls; then remove the QA account.
+- [ ] Save a fresh checkpoint after completing row-level account-management validation.
+- [x] Visually validate one real Content Manager row in both active and suspended states, including the changed status badge and Reactivate publishing access control, then clean up the QA account.
