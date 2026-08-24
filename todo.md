@@ -63,7 +63,7 @@
 - [x] Exercise Super Admin Content Manager creation end-to-end, confirm listing visibility, and clean up the validation account.
 - [x] Replace common raw JSON content and page editing with guided form fields for non-technical administrators.
 - [x] Verify both settings and content records survive a fresh checkpoint and service restart, then clean up validation records.
-- [ ] Add success-path regression coverage for Settings and Accounts, visually validate repaired admin screens, and save a new checkpoint.
+- [x] Add success-path regression coverage for Settings and Accounts, visually validate repaired admin screens, and save a new checkpoint.
 - [x] Replace remaining common ContentWorkspace metadata JSON with guided typed fields, reserving JSON only for rare advanced cases.
 - [x] Visually validate the repaired Settings, Accounts, guided content, and guided page screens before the final checkpoint.
 - [x] Keep CMS section state synchronized with direct hash changes and browser history navigation.
