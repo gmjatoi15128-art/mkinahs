@@ -1,5 +1,4 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { startLogin } from "@/const";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +31,7 @@ export default function DashboardLayout({
 }) {
   const { user, loading, logout } = useAuth();
   if (loading) return <div className="grid min-h-screen place-items-center bg-slate-50 text-sm text-slate-600">Loading secure workspace…</div>;
-  if (!user) return <div className="grid min-h-screen place-items-center bg-slate-50 p-6"><div className="w-full max-w-sm rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm"><ShieldCheck className="mx-auto h-10 w-10 text-navy" /><h1 className="mt-5 text-xl font-bold text-navy">Secure CMS access</h1><p className="mt-2 text-sm leading-6 text-slate-600">Sign in using an assigned administrator account to continue.</p><Button className="mt-6 w-full" onClick={() => startLogin()}>Sign in</Button></div></div>;
+  if (!user) return <div className="grid min-h-screen place-items-center bg-slate-50 p-6"><div className="w-full max-w-sm rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm"><ShieldCheck className="mx-auto h-10 w-10 text-navy" /><h1 className="mt-5 text-xl font-bold text-navy">Secure CMS access</h1><p className="mt-2 text-sm leading-6 text-slate-600">Sign in using your assigned CMS email address and password.</p><Button className="mt-6 w-full" onClick={() => { window.location.href = "/cms-login"; }}>CMS sign in</Button></div></div>;
   return <SidebarProvider defaultOpen>
     <Sidebar collapsible="icon" className="border-r border-slate-200 bg-navy text-white">
       <SidebarHeader className="border-b border-white/10 p-4"><div className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-xl bg-gold-300 text-navy"><ShieldCheck className="h-5 w-5" /></div><div className="min-w-0 group-data-[collapsible=icon]:hidden"><p className="truncate font-bold">{title}</p><p className="text-xs text-slate-300">Institutional content</p></div></div></SidebarHeader>

@@ -38,4 +38,18 @@
 - [x] Build genuinely distinct page-specific directory layouts beyond shared rails and empty states for Programs, Faculty, News, Events, Gallery, and Downloads.
 - [x] Re-audit all public list and approved dynamic-detail routes after the distinct page-layout work is complete.
 - [ ] Validate valid Program, Faculty, News, and Event detail routes using approved published CMS records when they become available; do not fabricate records.
-- [x] Save the audited public-site, CMS, SEO, and layout refinements in a new checkpoint for review.
+- [ ] Save the audited public-site, CMS, SEO, and layout refinements in a new checkpoint for review.
+- [ ] Create clearly labeled temporary QA Program, Faculty, News, and Event records solely for dynamic route validation.
+- [ ] Visually validate each published temporary QA detail route and its structured metadata.
+- [ ] Remove all temporary QA records and confirm no test content is publicly reachable.
+- [x] Add secure credential fields and database support for standalone CMS accounts without exposing password data.
+- [x] Implement password hashing, credential login, logout, session validation, throttling, and role-aware CMS authorization.
+- [x] Create a standalone CMS sign-in page and secure first Super Admin account setup flow.
+- [x] Add Super Admin account management for Content Manager invitations or credential creation.
+- [x] Remove public CMS reliance on Manus OAuth and ensure normal public pages remain unaffected.
+- [x] Add authentication and authorization regression tests, verify the CMS workflows, and checkpoint the standalone login system.
+- [x] Protect first Super Admin setup with a one-time server-side bootstrap secret and setup-lockout regression coverage.
+- [x] Re-verify core public browsing routes after the standalone CMS authentication migration.
+- [x] Add regression coverage proving first-admin setup is blocked after a CMS account exists.
+- [x] Save a checkpoint containing the standalone CMS credential login replacement.
+- [x] Save and deliver the final standalone CMS authentication checkpoint.

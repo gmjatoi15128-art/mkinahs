@@ -1,22 +1,25 @@
 import { z } from "zod";
-import { COOKIE_NAME } from "../shared/const";
 import {
   cmsModules,
+  countCmsUsers,
+  createCmsUser,
   findPublishedBySlug,
   getAdminOverview,
+  getCmsUserByEmail,
   getDb,
   getPublicSnapshot,
+  listCmsUsers,
   listModule,
   type CmsModule,
   updateModuleStatus,
   upsertSeoSetting,
   upsertSiteSetting,
 } from "./db";
-import { getSessionCookieOptions } from "./_core/cookies";
+import { canAttemptLogin, clearCmsSession, clearLoginAttempts, hashCmsPassword, issueCmsSession, normalizeEmail, recordFailedLogin, verifyCmsPassword, verifyCmsSetupToken } from "./cmsAuth";
 import { adminProcedure, publicProcedure, router, superAdminProcedure } from "./_core/trpc";
 import { systemRouter } from "./_core/systemRouter";
 import { storagePut } from "./storage";
-import { clinicalTraining, downloads, events, facilities, faculty, galleryCategories, galleryImages, hospitalAffiliations, newsArticles, pages, programs } from "../drizzle/schema";
+import { clinicalTraining, downloads, events, facilities, faculty, galleryCategories, galleryImages, hospitalAffiliations, newsArticles, pages, programs, type User } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 const moduleSchema = z.enum(cmsModules);
@@ -42,6 +45,9 @@ function asArray(value: unknown) {
 function publishDate(status: z.infer<typeof contentStatusSchema>) {
   return status === "published" ? new Date() : null;
 }
+
+const credentialsSchema = z.object({ email: z.string().trim().email().max(320), password: z.string().min(12).max(128) });
+function safeUser(user: User | null | undefined): Omit<User, "passwordHash"> | null { if (!user) return null; const { passwordHash: _passwordHash, ...safe } = user; return safe; }
 
 async function saveModuleRecord(module: CmsModule, record: z.infer<typeof recordSchema>) {
   const db = await getDb();
@@ -105,10 +111,35 @@ async function saveModuleRecord(module: CmsModule, record: z.infer<typeof record
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(opts => safeUser(opts.ctx.user)),
+    setupStatus: publicProcedure.query(async () => ({ requiresSetup: (await countCmsUsers()) === 0 })),
+    bootstrap: router({
+      validate: publicProcedure.input(z.object({ setupToken: z.string().min(1).max(256) })).query(({ input }) => ({ valid: verifyCmsSetupToken(input.setupToken) })),
+    }),
+    setup: publicProcedure.input(credentialsSchema.extend({ name: z.string().trim().min(2).max(160), setupToken: z.string().min(1).max(256) })).mutation(async ({ input, ctx }) => {
+      if (await countCmsUsers()) throw new Error("A CMS Super Admin account already exists");
+      if (!verifyCmsSetupToken(input.setupToken)) throw new Error("Invalid CMS bootstrap token");
+      const email = normalizeEmail(input.email);
+      const user = await createCmsUser({ name: input.name, email, passwordHash: await hashCmsPassword(input.password), role: "super_admin" });
+      if (!user) throw new Error("Unable to create the CMS Super Admin account");
+      await issueCmsSession(ctx.res, ctx.req, user.id);
+      return safeUser(user);
+    }),
+    login: publicProcedure.input(credentialsSchema).mutation(async ({ input, ctx }) => {
+      const email = normalizeEmail(input.email);
+      const attemptKey = `${ctx.req.ip ?? "unknown"}:${email}`;
+      if (!canAttemptLogin(attemptKey)) throw new Error("Too many sign-in attempts. Please wait before trying again.");
+      const user = await getCmsUserByEmail(email);
+      if (!user || !user.isActive || !(await verifyCmsPassword(input.password, user.passwordHash))) {
+        recordFailedLogin(attemptKey);
+        throw new Error("Invalid email address or password");
+      }
+      clearLoginAttempts(attemptKey);
+      await issueCmsSession(ctx.res, ctx.req, user.id);
+      return safeUser(user);
+    }),
     logout: publicProcedure.mutation(({ ctx }) => {
-      const cookieOptions = getSessionCookieOptions(ctx.req);
-      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      clearCmsSession(ctx.res, ctx.req);
       return { success: true } as const;
     }),
   }),
@@ -138,6 +169,14 @@ export const appRouter = router({
     }),
     seo: router({
       upsert: superAdminProcedure.input(z.object({ path: z.string().min(1).max(250), title: z.string().max(250).optional(), description: z.string().max(1000).optional(), ogImageUrl: z.string().max(1000).optional(), canonicalUrl: z.string().max(1000).optional(), indexable: z.boolean() })).mutation(({ input }) => upsertSeoSetting(input)),
+    }),
+    accounts: router({
+      list: superAdminProcedure.query(async () => (await listCmsUsers()).flatMap(account => { const safe = safeUser(account); return safe ? [safe] : []; })),
+      createContentManager: superAdminProcedure.input(credentialsSchema.extend({ name: z.string().trim().min(2).max(160) })).mutation(async ({ input }) => {
+        const email = normalizeEmail(input.email);
+        if (await getCmsUserByEmail(email)) throw new Error("A CMS account with this email already exists");
+        return safeUser(await createCmsUser({ name: input.name, email, passwordHash: await hashCmsPassword(input.password), role: "content_manager" }));
+      }),
     }),
   }),
 });

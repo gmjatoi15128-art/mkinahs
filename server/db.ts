@@ -1,5 +1,6 @@
 import { and, asc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import { createHash } from "node:crypto";
 import {
   clinicalTraining,
   downloads,
@@ -85,6 +86,49 @@ export async function getUserByOpenId(openId: string) {
   if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
   return result[0];
+}
+
+export async function getCmsUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getCmsUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return result.find(user => user.loginMethod === "cms");
+}
+
+export async function countCmsUsers() {
+  const db = await getDb();
+  if (!db) return 0;
+  const records = await db.select({ id: users.id }).from(users).where(eq(users.loginMethod, "cms"));
+  return records.length;
+}
+
+export async function createCmsUser(input: { name: string; email: string; passwordHash: string; role: "super_admin" | "content_manager" }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database unavailable");
+  await db.insert(users).values({
+    openId: `cms_${createHash("sha256").update(input.email).digest("hex").slice(0, 56)}`,
+    name: input.name,
+    email: input.email,
+    loginMethod: "cms",
+    passwordHash: input.passwordHash,
+    isActive: true,
+    role: input.role,
+    lastSignedIn: new Date(),
+  });
+  return getCmsUserByEmail(input.email);
+}
+
+export async function listCmsUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(users).where(eq(users.loginMethod, "cms")).orderBy(asc(users.createdAt));
 }
 
 export async function getPublicSnapshot() {

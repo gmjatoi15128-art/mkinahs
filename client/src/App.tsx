@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Admin from "@/pages/Admin";
+import CmsAccess from "@/pages/CmsAccess";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import {
@@ -44,6 +45,8 @@ function Router() {
     <Route path="/events/:slug" component={EventDetailPage} />
     <Route path="/downloads" component={DownloadsPage} />
     <Route path="/contact" component={ContactPage} />
+    <Route path="/cms-login" component={CmsAccess} />
+    <Route path="/cms-setup" component={CmsAccess} />
     <Route path="/admin" component={Admin} />
     <Route path="/404" component={NotFound} />
     <Route component={NotFound} />
