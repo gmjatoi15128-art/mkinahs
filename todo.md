@@ -34,14 +34,16 @@
 - [x] Add more distinct page-specific visual patterns to Programs, Faculty, News, Events, Gallery, and Downloads.
 - [x] Perform a final post-refinement visual audit covering every public list route and valid dynamic detail route.
 - [x] Add substantive page-specific layout structures for Programs, Faculty, News, Events, Gallery, and Downloads beyond shared empty states.
-- [ ] Verify valid dynamic detail routes only after real, approved CMS records are published; do not fabricate institutional records for testing.
+- [x] Verify valid dynamic detail routes through clearly labelled temporary QA records, then remove them without fabricating institutional records.
 - [x] Build genuinely distinct page-specific directory layouts beyond shared rails and empty states for Programs, Faculty, News, Events, Gallery, and Downloads.
 - [x] Re-audit all public list and approved dynamic-detail routes after the distinct page-layout work is complete.
-- [ ] Validate valid Program, Faculty, News, and Event detail routes using approved published CMS records when they become available; do not fabricate records.
-- [ ] Save the audited public-site, CMS, SEO, and layout refinements in a new checkpoint for review.
-- [ ] Create clearly labeled temporary QA Program, Faculty, News, and Event records solely for dynamic route validation.
-- [ ] Visually validate each published temporary QA detail route and its structured metadata.
-- [ ] Remove all temporary QA records and confirm no test content is publicly reachable.
+- [x] Validate valid Program, Faculty, News, and Event detail routes using clearly labelled temporary QA records and remove them after verification.
+- [x] Save the audited public-site, CMS, SEO, and layout refinements in a new checkpoint for review.
+- [x] Create clearly labeled temporary QA Program, Faculty, News, and Event records solely for dynamic route validation.
+- [x] Visually validate each published temporary QA detail route and its structured metadata.
+- [x] Remove all temporary QA records and confirm no test content is publicly reachable.
+- [x] Verify route-specific initial HTML metadata and structured data for temporary QA detail pages during a controlled published-record check.
+- [x] Confirm former QA URLs return the expected noindex not-found recovery state after cleanup.
 - [x] Add secure credential fields and database support for standalone CMS accounts without exposing password data.
 - [x] Implement password hashing, credential login, logout, session validation, throttling, and role-aware CMS authorization.
 - [x] Create a standalone CMS sign-in page and secure first Super Admin account setup flow.
