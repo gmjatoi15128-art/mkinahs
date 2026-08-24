@@ -30,4 +30,10 @@ describe("CMS access controls", () => {
     const caller = appRouter.createCaller(createContext("content_manager"));
     await expect(caller.cms.settings.upsert({ key: "contact", label: "Contact", value: {} })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
+
+  it("blocks a Content Manager from CMS account management", async () => {
+    const caller = appRouter.createCaller(createContext("content_manager"));
+    await expect(caller.cms.accounts.list()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.cms.accounts.createContentManager({ name: "Blocked Account", email: "blocked@example.invalid", password: "A secure test password" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
 });

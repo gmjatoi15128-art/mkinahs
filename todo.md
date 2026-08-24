@@ -55,3 +55,14 @@
 - [x] Add regression coverage proving first-admin setup is blocked after a CMS account exists.
 - [x] Save a checkpoint containing the standalone CMS credential login replacement.
 - [x] Save and deliver the final standalone CMS authentication checkpoint.
+- [x] Audit and repair the CMS Settings workflow, including reliable loading, structured field editing, and save feedback.
+- [x] Audit and repair the CMS Accounts workflow, including reliable Super Admin access, account creation, and clear account state feedback.
+- [x] Simplify CMS navigation and content editing so core actions are easier for non-technical administrators.
+- [x] Verify that all CMS settings and content are stored in the database and survive future code checkpoints and deployments.
+- [x] Add regression tests for repaired Settings and Accounts procedures, validate the improved admin interface, and save a checkpoint.
+- [x] Exercise Super Admin Content Manager creation end-to-end, confirm listing visibility, and clean up the validation account.
+- [x] Replace common raw JSON content and page editing with guided form fields for non-technical administrators.
+- [ ] Verify both settings and content records survive a fresh checkpoint and service restart, then clean up validation records.
+- [ ] Add success-path regression coverage for Settings and Accounts, visually validate repaired admin screens, and save a new checkpoint.
+- [x] Replace remaining common ContentWorkspace metadata JSON with guided typed fields, reserving JSON only for rare advanced cases.
+- [ ] Visually validate the repaired Settings, Accounts, guided content, and guided page screens before the final checkpoint.
