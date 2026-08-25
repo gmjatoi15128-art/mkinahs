@@ -1,5 +1,8 @@
 import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { PublicMobileMenu } from "../client/src/components/PublicLayout";
 
 describe("public institutional messaging", () => {
   const publicPages = readFileSync(new URL("../client/src/pages/PublicPages.tsx", import.meta.url), "utf8");
@@ -19,5 +22,20 @@ describe("public institutional messaging", () => {
     expect(publicPages).toContain("For current programme availability, requirements, dates, fees, and prospectus guidance");
     expect(publicPages).toContain("Public contact details are not listed at this time");
     expect(home).toContain("Explore academic pathways, institute information, and admissions guidance.");
+  });
+
+  it("keeps an explicit Home destination in the shared public navigation", () => {
+    expect(layout).toContain('["Home", "/"]');
+    expect(layout).toContain("Mobile navigation");
+    expect(layout).toContain("Primary navigation");
+    const mobileMenuSource = layout.slice(layout.indexOf('aria-label="Mobile navigation"'), layout.indexOf('aria-label="Mobile navigation"') + 900);
+    expect(mobileMenuSource).toContain("mainNavigation.map");
+    expect(mobileMenuSource).toContain('href={href}');
+  });
+
+  it("renders Home in the opened mobile navigation menu with the homepage route", () => {
+    const markup = renderToStaticMarkup(createElement(PublicMobileMenu, { onNavigate: () => undefined }));
+    expect(markup).toContain('aria-label="Mobile navigation"');
+    expect(markup).toMatch(/<a[^>]*href="\/"[^>]*>Home/);
   });
 });

@@ -8,6 +8,7 @@ import {
   AboutPage,
   AdmissionsPage,
   ClinicalTrainingPage,
+  CmsContentPage,
   ContactPage,
   DownloadsPage,
   EventDetailPage,
@@ -48,6 +49,7 @@ function Router() {
     <Route path="/cms-login" component={CmsAccess} />
     <Route path="/cms-setup" component={CmsAccess} />
     <Route path="/admin" component={Admin} />
+    <Route path="/:slug" component={CmsContentPage} />
     <Route path="/404" component={NotFound} />
     <Route component={NotFound} />
   </Switch>;

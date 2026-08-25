@@ -89,3 +89,15 @@
 - [x] Replace the remaining programme detail unavailable-state wording and validate all unavailable-detail messages use the final institutional style.
 - [x] Visually validate the remaining Student Life content page with the revised institutional messaging before final checkpointing.
 - [x] Save a fresh checkpoint after route-specific public-copy assertions, unavailable-detail refinements, and final route validation.
+- [x] Restore a visible Home link in the public desktop and mobile navigation menus.
+- [x] Validate Home navigation on desktop and mobile, run regressions, and save a checkpoint.
+- [x] Verify the opened mobile navigation menu visibly contains Home and that its route is `/` using an alternative render-level validation path.
+- [ ] Save a fresh checkpoint after completing the Home navigation fix and opened-menu validation.
+- [ ] Add and run a true rendered-state test for the opened mobile navigation menu, confirming Home is visibly available and links to `/`.
+- [ ] Inventory every public route, CMS module, stored setting, content type, and Super Admin/Content Manager permission boundary for launch readiness.
+- [ ] Exercise each CMS save workflow with controlled non-public QA data, verify public rendering where applicable, and clean up all QA records.
+- [ ] Verify database-backed CMS changes survive a restart and remain independent from code checkpoints; document the non-destructive deployment guarantee in-code.
+- [ ] Add or extend workflow and permission regression coverage, perform public/CMS visual review, and save a launch-readiness checkpoint.
+- [x] Prevent guided Settings saves from discarding CMS-managed identity/contact fields, and expose all existing homepage settings in guided forms.
+- [x] Let CMS staff edit existing pages and publish additional CMS-managed editorial pages without touching routes or code.
+- [x] Ensure every guided content module, including affiliations and gallery images, submits a server-valid slug and can save reliably.

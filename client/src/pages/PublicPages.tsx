@@ -28,6 +28,7 @@ function ContentPage({ slug, title, eyebrow }: { slug: string; title: string; ey
 
 export function AboutPage() { return <ContentPage slug="about" title="About the Institute" eyebrow="MK Institute" />; }
 export function StudentLifePage() { return <ContentPage slug="student-life" title="Student Life" eyebrow="Community" />; }
+export function CmsContentPage() { const { slug } = useParams<{ slug: string }>(); return <ContentPage slug={slug || ""} title="Information centre" eyebrow="MK Institute" />; }
 
 export function ProgramsPage() {
   const { data } = useSnapshot(); const [query, setQuery] = useState(""); const [category, setCategory] = useState("all");
