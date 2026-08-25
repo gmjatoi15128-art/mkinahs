@@ -17,7 +17,8 @@ function publicBaseUrl(req: express.Request) {
   const configured = process.env.PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
   if (configured) return configured;
   const protocol = String(req.headers["x-forwarded-proto"] || req.protocol).split(",")[0] || "https";
-  return `${protocol}://${req.get("host")}`;
+  const visitorHost = String(req.headers["x-forwarded-host"] || req.get("host")).split(",")[0].trim();
+  return `${protocol}://${visitorHost}`;
 }
 
 function isoDate(value: Date | null | undefined) {
@@ -52,7 +53,7 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   app.get("/robots.txt", (req, res) => {
-    res.type("text/plain").send(`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: ${publicBaseUrl(req)}/sitemap.xml\n`);
+    res.type("text/plain").send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /cms-login\nDisallow: /cms-setup\nDisallow: /cms-preview/\nDisallow: /api/\nSitemap: ${publicBaseUrl(req)}/sitemap.xml\n`);
   });
   app.get("/sitemap.xml", async (req, res) => {
     const snapshot = await getPublicSnapshot();
@@ -64,6 +65,7 @@ async function startServer() {
       ...snapshot.faculty.map(item => ({ path: `/faculty/${item.slug}`, lastModified: isoDate(item.updatedAt) })),
       ...snapshot.news.map(item => ({ path: `/news/${item.slug}`, lastModified: isoDate(item.updatedAt) || isoDate(item.publishedAt) })),
       ...snapshot.events.map(item => ({ path: `/events/${item.slug}`, lastModified: isoDate(item.updatedAt) || isoDate(item.publishedAt) })),
+      ...snapshot.pages.filter(item => !["about", "student-life"].includes(item.slug)).map(item => ({ path: `/${item.slug}`, lastModified: isoDate(item.updatedAt) || isoDate(item.publishedAt) })),
     ];
     const urls = [...staticUrls, ...dynamicUrls].map(({ path, lastModified }) => `<url><loc>${xmlEscape(`${baseUrl}${path}`)}</loc>${lastModified ? `<lastmod>${lastModified}</lastmod>` : ""}</url>`).join("");
     res.type("application/xml").send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`);

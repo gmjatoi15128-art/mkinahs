@@ -11,7 +11,13 @@ function currentOrigin(req: Request) {
   const configured = process.env.CANONICAL_ORIGIN?.trim().replace(/\/$/, "");
   if (configured) return configured;
   const protocol = String(req.headers["x-forwarded-proto"] || req.protocol).split(",")[0] || "https";
-  return `${protocol}://${req.get("host")}`;
+  const visitorHost = String(req.headers["x-forwarded-host"] || req.get("host")).split(",")[0].trim();
+  return `${protocol}://${visitorHost}`;
+}
+
+function canonicalPath(value: unknown, fallback: string) {
+  const candidate = compact(value);
+  return /^https?:\/\/[^\s]+$/i.test(candidate) || /^\/(?!\/)/.test(candidate) ? candidate : fallback;
 }
 
 function staticMeta(path: string, siteName: string): SeoShape | null {
@@ -42,6 +48,7 @@ export async function buildSeoHead(req: Request) {
   const seoRecord = snapshot.seo.find(record => record.path === rawPath);
   let meta = staticMeta(rawPath, siteName);
   let notFound = false;
+  const privateCmsPath = rawPath === "/admin" || rawPath.startsWith("/admin/") || rawPath.startsWith("/cms-preview/") || rawPath === "/cms-login" || rawPath === "/cms-setup";
 
   const match = rawPath.match(/^\/(programs|faculty|news|events)\/([^/]+)$/);
   if (match) {
@@ -54,15 +61,22 @@ export async function buildSeoHead(req: Request) {
     else meta = { title: `${record.title} | ${siteName}`, description: description(record.description, `Event information from ${siteName}.`), canonicalPath: rawPath, indexable: true, ogType: "website", image: record.imageUrl || undefined, article: { published: record.publishedAt, updated: record.updatedAt } };
   }
 
-  if (rawPath === "/admin" || rawPath.startsWith("/admin/") || rawPath.startsWith("/cms-preview/") || rawPath === "/cms-login" || rawPath === "/cms-setup") meta = { title: `CMS | ${siteName}`, description: "Secure content management workspace.", canonicalPath: rawPath, indexable: false, ogType: "website" };
+  const cmsPage = rawPath.match(/^\/([^/]+)$/)?.[1] ? snapshot.pages.find(page => page.slug === rawPath.slice(1)) : undefined;
+  if (cmsPage) {
+    const sections = cmsPage.sections && typeof cmsPage.sections === "object" && !Array.isArray(cmsPage.sections) ? cmsPage.sections as Record<string, unknown> : {};
+    meta = { title: compact(cmsPage.seoTitle, `${cmsPage.title} | ${siteName}`), description: description(cmsPage.seoDescription || sections.description, `Official information from ${siteName}.`), canonicalPath: canonicalPath(cmsPage.canonicalUrl, rawPath), indexable: cmsPage.indexable !== false, ogType: "website", image: cmsPage.ogImageUrl || undefined };
+  }
+
+  if (privateCmsPath) meta = { title: `CMS | ${siteName}`, description: "Secure content management workspace.", canonicalPath: rawPath, indexable: false, ogType: "website" };
   if (!meta) { meta = { title: `Page not found | ${siteName}`, description: `The requested page is not available from ${siteName}.`, canonicalPath: rawPath, indexable: false, ogType: "website" }; notFound = true; }
-  if (seoRecord) meta = { ...meta, title: compact(seoRecord.title, meta.title), description: description(seoRecord.description, meta.description), indexable: seoRecord.indexable, image: seoRecord.ogImageUrl || meta.image, canonicalPath: seoRecord.canonicalUrl || meta.canonicalPath };
+  if (seoRecord && !notFound && !privateCmsPath) meta = { ...meta, title: compact(seoRecord.title, meta.title), description: description(seoRecord.description, meta.description), indexable: seoRecord.indexable, image: seoRecord.ogImageUrl || meta.image, canonicalPath: canonicalPath(seoRecord.canonicalUrl, meta.canonicalPath) };
 
   const origin = currentOrigin(req);
   const canonical = meta.canonicalPath.startsWith("http") ? meta.canonicalPath : `${origin}${meta.canonicalPath}`;
   const image = meta.image?.startsWith("/") ? `${origin}${meta.image}` : meta.image;
   const organization = { "@context": "https://schema.org", "@type": ["Organization", "EducationalOrganization"], name: siteName, url: origin };
   const structured: Array<Record<string, unknown>> = [organization];
+  if (meta.indexable) structured.push({ "@context": "https://schema.org", "@type": rawPath === "/" ? "WebSite" : "WebPage", name: meta.title, description: meta.description, url: canonical, inLanguage: "en", isPartOf: { "@type": "WebSite", name: siteName, url: origin } });
   if (meta.ogType === "article") structured.push({ "@context": "https://schema.org", "@type": "Article", headline: meta.title.replace(` | ${siteName}`, ""), description: meta.description, mainEntityOfPage: canonical, datePublished: meta.article?.published?.toISOString(), dateModified: meta.article?.updated?.toISOString(), image });
   const jsonLd = structured.map(item => `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, "\\u003c")}</script>`).join("\n");
   const tags = [

@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   createCmsUser: vi.fn(),
   setContentManagerActive: vi.fn(),
   resetContentManagerPassword: vi.fn(),
+  getCmsPreviewRecord: vi.fn(),
 }));
 
 vi.mock("./db", async importOriginal => {
@@ -26,6 +27,24 @@ function createSuperAdminContext(): TrpcContext {
       email: "super.admin@example.invalid",
       loginMethod: "cms",
       role: "super_admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSignedIn: new Date(),
+    },
+    req: { protocol: "https", headers: {} } as TrpcContext["req"],
+    res: { clearCookie: () => undefined } as TrpcContext["res"],
+  };
+}
+
+function createContentManagerContext(): TrpcContext {
+  return {
+    user: {
+      id: 92,
+      openId: "content-manager-test",
+      name: "Content Manager",
+      email: "manager@example.invalid",
+      loginMethod: "cms",
+      role: "content_manager",
       createdAt: new Date(),
       updatedAt: new Date(),
       lastSignedIn: new Date(),
@@ -93,5 +112,14 @@ describe("CMS Super Admin success paths", () => {
     await expect(caller.cms.accounts.resetContentManagerPassword({ id: 32, password: "A fresh temporary password" })).resolves.toEqual(expect.not.objectContaining({ passwordHash: expect.anything() }));
     expect(mocks.setContentManagerActive).toHaveBeenCalledWith(32, false);
     expect(mocks.resetContentManagerPassword).toHaveBeenCalledWith(32, expect.stringContaining(":"));
+  });
+
+  it("lets a Content Manager retrieve a saved record through the protected preview workflow", async () => {
+    const previewRecord = { id: 14, title: "Draft notice", status: "draft" };
+    mocks.getCmsPreviewRecord.mockResolvedValue(previewRecord);
+    const caller = appRouter.createCaller(createContentManagerContext());
+
+    await expect(caller.cms.preview({ target: "newsArticles", id: 14 })).resolves.toEqual(previewRecord);
+    expect(mocks.getCmsPreviewRecord).toHaveBeenCalledWith("newsArticles", 14);
   });
 });

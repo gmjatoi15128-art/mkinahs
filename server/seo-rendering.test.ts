@@ -19,6 +19,7 @@ describe("crawler-visible route metadata", () => {
     expect(result.tags).toContain('rel="canonical" href="https://example.test/about"');
     expect(result.tags).toContain('meta name="robots" content="index, follow"');
     expect(result.tags).toContain('application/ld+json');
+    expect(result.tags).toContain('"@type":"WebPage"');
   });
 
   it("marks missing detail records as noindex metadata for a real 404 response", async () => {
@@ -26,5 +27,13 @@ describe("crawler-visible route metadata", () => {
     expect(result.notFound).toBe(true);
     expect(result.tags).toContain('meta name="robots" content="noindex, follow"');
     expect(result.tags).toContain("Information centre | MK Institute of Nursing and Allied Health Sciences");
+  });
+
+  it("keeps CMS paths noindex and uses the visitor-facing forwarded host for canonical URLs", async () => {
+    const request = requestFor("/admin") as Request & { headers: Record<string, string> };
+    request.headers["x-forwarded-host"] = "mkinstitut-k6f3dinp.manus.space";
+    const result = await buildSeoHead(request);
+    expect(result.tags).toContain('meta name="robots" content="noindex, follow"');
+    expect(result.tags).toContain('rel="canonical" href="https://mkinstitut-k6f3dinp.manus.space/admin"');
   });
 });
