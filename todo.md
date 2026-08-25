@@ -107,7 +107,7 @@
 - [x] Save the final checkpoint containing the validated protected CMS preview workflow.
 - [x] Re-audit every public route, CMS workflow, crawler-facing metadata, sitemap, robots rules, and responsive state for verified defects.
 - [x] Repair all verified public or CMS defects and strengthen technical and on-page SEO without introducing unverified institutional claims.
-- [ ] Add regression coverage for audit repairs, validate crawler directives and responsive views, and save an SEO audit release checkpoint.
+- [x] Add regression coverage for audit repairs, validate crawler directives and responsive views, and save an SEO audit release checkpoint.
 - [x] Re-audit published dynamic programme, faculty, news, event, and CMS-created information-page routes without retaining any temporary QA content.
 - [x] Re-run the core CMS save, edit, publish, preview, and permission workflows; document the verified results before the audit release.
 - [x] Re-run a controlled database-backed CMS save, edit, publish/unpublish, preview, and permission audit with non-public QA content; remove all QA records afterward.
