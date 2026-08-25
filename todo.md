@@ -111,3 +111,11 @@
 - [x] Re-audit published dynamic programme, faculty, news, event, and CMS-created information-page routes without retaining any temporary QA content.
 - [x] Re-run the core CMS save, edit, publish, preview, and permission workflows; document the verified results before the audit release.
 - [x] Re-run a controlled database-backed CMS save, edit, publish/unpublish, preview, and permission audit with non-public QA content; remove all QA records afterward.
+- [x] Make CMS navigation close automatically after a section is selected and improve mobile navigation feedback.
+- [x] Simplify CMS workspace hierarchy and common content-management actions for staff usability.
+- [x] Add polished, accessible public page transitions and meaningful route-loading states without delaying navigation.
+- [ ] Add interaction regression coverage, validate desktop and mobile CMS/public flows, and save a refinement release checkpoint.
+- [x] Simplify common CMS workspaces with clearer task guidance and consistently placed save, preview, edit, and publish actions.
+- [x] Add data-driven loading states for public directories, detail records, and CMS-created pages rather than relying only on timed route feedback.
+- [ ] Re-validate CMS and public flows after the workspace and true loading-state improvements, then save the refinement checkpoint.
+- [x] Verify and remove any remaining publicly visible QA-style programme content that undermines the institutional presentation.

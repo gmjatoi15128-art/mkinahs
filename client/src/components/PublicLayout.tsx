@@ -51,7 +51,7 @@ function PressReleaseTicker({ records = [] }: { records?: PressReleaseRecord[] }
 }
 
 export function PublicMobileMenu({ onNavigate }: { onNavigate: () => void }) {
-  return <nav className="container flex flex-col gap-1" aria-label="Mobile navigation">{mainNavigation.map(([label, href]) => <a key={href} onClick={onNavigate} href={href} className="flex min-h-12 items-center justify-between rounded-lg px-3 font-semibold text-slate-700 hover:bg-slate-50 hover:text-navy">{label}<ChevronRight className="h-4 w-4" /></a>)}<a onClick={onNavigate} href="/admissions" className="btn-primary mt-3 justify-center">Admissions Information</a></nav>;
+  return <nav className="container flex flex-col gap-1" aria-label="Mobile navigation">{mainNavigation.map(([label, href]) => <Link key={href} onClick={onNavigate} href={href} className="flex min-h-12 items-center justify-between rounded-lg px-3 font-semibold text-slate-700 hover:bg-slate-50 hover:text-navy">{label}<ChevronRight className="h-4 w-4" /></Link>)}<Link onClick={onNavigate} href="/admissions" className="btn-primary mt-3 justify-center">Admissions Information</Link></nav>;
 }
 
 export function PublicLayout({ children, settings, seo: seoRecords, pressReleases, title, description, breadcrumbs }: PublicLayoutProps) {

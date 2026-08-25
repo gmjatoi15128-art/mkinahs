@@ -1,0 +1,9 @@
+# CMS and Public Navigation Refinement
+
+The CMS sidebar now groups workspace, content, and administrative tools, highlights the active section, and closes the supported mobile drawer immediately after a staff member selects a destination. The mobile header reports the active CMS section after navigation.
+
+Public mobile navigation now uses client-side routes rather than full document navigations. A brief, non-blocking route cue, top-of-page reset, page-entry motion, and polite loading announcement make new public pages feel more deliberate while respecting reduced-motion settings. Desktop and mobile checks of the homepage, programme directory, CMS sign-in, and access boundary rendered correctly. The interaction regression suite passed with 12 files and 36 tests.
+
+The public route feedback is now also connected to real requests: directories and CMS pages render a branded loading surface while the public snapshot is pending, while programme, faculty, news, and event details wait for their own record query before showing either content or an unavailable state. CMS content forms now state the three-step draft-review-publish process, use explicit save labels, offer a visible Preview action while editing, provide a New record reset, and expose Edit alongside preview and publish controls in each library row. The final validation passed with 12 test files and 37 tests.
+
+During final visual review, a publicly visible BSN record containing unmistakable testing text was found and removed. The programme directory now contains only approved published records, and the former detail path presents the intended unavailable state.

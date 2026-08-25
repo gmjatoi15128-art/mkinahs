@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { Router } from "wouter";
 import { PublicMobileMenu } from "../client/src/components/PublicLayout";
 
 describe("public institutional messaging", () => {
@@ -34,7 +35,7 @@ describe("public institutional messaging", () => {
   });
 
   it("renders Home in the opened mobile navigation menu with the homepage route", () => {
-    const markup = renderToStaticMarkup(createElement(PublicMobileMenu, { onNavigate: () => undefined }));
+    const markup = renderToStaticMarkup(createElement(Router, { hook: () => ["/", () => undefined] }, createElement(PublicMobileMenu, { onNavigate: () => undefined })));
     expect(markup).toContain('aria-label="Mobile navigation"');
     expect(markup).toMatch(/<a[^>]*href="\/"[^>]*>Home/);
   });

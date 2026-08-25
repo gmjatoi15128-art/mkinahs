@@ -25,11 +25,15 @@ import {
   StudentLifePage,
 } from "@/pages/PublicPages";
 import { Route, Switch } from "wouter";
+import { useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import PublicRouteExperience from "./components/PublicRouteExperience";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 function Router() {
-  return <Switch>
+  const [location] = useLocation();
+  const isCmsRoute = location === "/admin" || location.startsWith("/cms-");
+  const routes = <Switch>
     <Route path="/" component={Home} />
     <Route path="/about" component={AboutPage} />
     <Route path="/programs" component={ProgramsPage} />
@@ -55,6 +59,7 @@ function Router() {
     <Route path="/404" component={NotFound} />
     <Route component={NotFound} />
   </Switch>;
+  return isCmsRoute ? routes : <PublicRouteExperience routeKey={location}>{routes}</PublicRouteExperience>;
 }
 
 function App() {
