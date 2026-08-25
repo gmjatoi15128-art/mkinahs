@@ -83,4 +83,9 @@
 - [x] Refine public-site motion and visual hierarchy with restrained institutional animations, premium hover states, and a polished navigation treatment.
 - [x] Validate desktop/mobile/reduced-motion behavior, run regressions, and save a checkpoint for the visual-polish update.
 - [x] Replace remaining public empty-state and provisional wording with consistent final institutional messaging that does not create unverified facts.
-- [ ] Validate revised public messaging across routes, run regressions, and save a checkpoint.
+- [x] Validate revised public messaging across routes, run regressions, and save a checkpoint.
+- [x] Visually validate final institutional messaging on Faculty, Facilities, Clinical Training, Gallery, Admissions, content pages, and representative unavailable-detail routes.
+- [x] Add targeted regression assertions for key route-specific institutional fallback messages, then re-run checks and save a fresh checkpoint.
+- [x] Replace the remaining programme detail unavailable-state wording and validate all unavailable-detail messages use the final institutional style.
+- [x] Visually validate the remaining Student Life content page with the revised institutional messaging before final checkpointing.
+- [ ] Save a fresh checkpoint after route-specific public-copy assertions, unavailable-detail refinements, and final route validation.

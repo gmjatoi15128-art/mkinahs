@@ -52,7 +52,7 @@ export function ProgramDetailPage() {
         </article>
         <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-6"><h2 className="font-bold text-navy">Programme details</h2><dl className="mt-5 grid gap-4 text-sm"><Detail term="Duration" definition={program.duration || "Not specified"} /><Detail term="Eligibility" definition={program.eligibility || "Not specified"} /></dl><Link href="/admissions" className="btn-primary mt-7 w-full justify-center">Admissions Information</Link></aside>
       </div></section>
-    </> : <><PageHero title="Program information" /><section className="public-section"><div className="container"><EmptyNotice title="Programme information centre" description="The requested programme is not part of the current published information centre." /></div></section></>}
+    </> : <><PageHero title="Program information" /><section className="public-section"><div className="container"><EmptyNotice title="Programme unavailable" description="This programme is not available in the public directory. Please return to Programs or contact the institute for current admissions guidance." /></div></section></>}
   </Page>;
 }
 

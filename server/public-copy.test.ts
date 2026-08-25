@@ -11,4 +11,13 @@ describe("public institutional messaging", () => {
     ["will appear here", "being developed", "will grow as", "to be announced", "when confirmed", "will be introduced", "will be shared"].forEach(phrase => expect(publicCopy.toLowerCase()).not.toContain(phrase));
     expect(publicCopy).toContain("Please contact the institute");
   });
+
+  it("retains the final route-specific institutional guidance for key unavailable states", () => {
+    expect(publicPages).toContain("Programme unavailable");
+    expect(publicPages).toContain("Notice unavailable");
+    expect(publicPages).toContain("Events calendar");
+    expect(publicPages).toContain("For current programme availability, requirements, dates, fees, and prospectus guidance");
+    expect(publicPages).toContain("Public contact details are not listed at this time");
+    expect(home).toContain("Explore academic pathways, institute information, and admissions guidance.");
+  });
 });
