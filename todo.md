@@ -80,3 +80,5 @@
 - [x] Re-run checks and tests after public-behavior coverage, then save a fresh checkpoint.
 - [x] Add a site-wide press-release ticker that lists only currently published News & Notices records and remains hidden when none are available.
 - [x] Add ticker regression coverage, responsive validation, and a release checkpoint.
+- [x] Refine public-site motion and visual hierarchy with restrained institutional animations, premium hover states, and a polished navigation treatment.
+- [ ] Validate desktop/mobile/reduced-motion behavior, run regressions, and save a checkpoint for the visual-polish update.
