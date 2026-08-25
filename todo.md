@@ -114,8 +114,12 @@
 - [x] Make CMS navigation close automatically after a section is selected and improve mobile navigation feedback.
 - [x] Simplify CMS workspace hierarchy and common content-management actions for staff usability.
 - [x] Add polished, accessible public page transitions and meaningful route-loading states without delaying navigation.
-- [ ] Add interaction regression coverage, validate desktop and mobile CMS/public flows, and save a refinement release checkpoint.
+- [x] Add interaction regression coverage, validate desktop and mobile CMS/public flows, and save a refinement release checkpoint.
 - [x] Simplify common CMS workspaces with clearer task guidance and consistently placed save, preview, edit, and publish actions.
 - [x] Add data-driven loading states for public directories, detail records, and CMS-created pages rather than relying only on timed route feedback.
-- [ ] Re-validate CMS and public flows after the workspace and true loading-state improvements, then save the refinement checkpoint.
+- [x] Re-validate CMS and public flows after the workspace and true loading-state improvements, then save the refinement checkpoint.
 - [x] Verify and remove any remaining publicly visible QA-style programme content that undermines the institutional presentation.
+- [x] Visually validate the updated authenticated CMS workspace on desktop and mobile, including mobile drawer closure and Save, Preview, Edit, and New record controls.
+- [x] Exercise a representative protected CMS workflow after the workspace action refinements, remove any controlled QA content, and save a final checkpoint with the completed checklist.
+- [x] Visually verify the authenticated mobile CMS drawer opens, closes after a section selection, and preserves the refined workspace controls.
+- [ ] Save the final checkpoint after the authenticated mobile CMS verification and completed checklist update.
