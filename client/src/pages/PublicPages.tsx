@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import { asObject, asObjectArray, asString, asStringArray, dateLabel, settingMap } from "@/lib/content";
 import { filterDownloadsByCategory } from "@/lib/publicEnhancements";
 import { EmptyNotice, PageHero, PublicLayout } from "@/components/PublicLayout";
+import NotFound from "@/pages/NotFound";
 import { ArrowRight, BookOpen, CalendarDays, Download, ExternalLink, FileText, Filter, Image as ImageIcon, Mail, MapPin, Phone, Search, Stethoscope, UsersRound, X } from "lucide-react";
 
 function useSnapshot() { return trpc.public.snapshot.useQuery(); }
@@ -28,7 +29,7 @@ function ContentPage({ slug, title, eyebrow }: { slug: string; title: string; ey
 
 export function AboutPage() { return <ContentPage slug="about" title="About the Institute" eyebrow="MK Institute" />; }
 export function StudentLifePage() { return <ContentPage slug="student-life" title="Student Life" eyebrow="Community" />; }
-export function CmsContentPage() { const { slug } = useParams<{ slug: string }>(); return <ContentPage slug={slug || ""} title="Information centre" eyebrow="MK Institute" />; }
+export function CmsContentPage() { const { slug } = useParams<{ slug: string }>(); const { data, isLoading } = useSnapshot(); const pageExists = Boolean(data?.pages.some(page => page.slug === slug)); if (!isLoading && !pageExists) return <NotFound />; return <ContentPage slug={slug || ""} title="Information centre" eyebrow="MK Institute" />; }
 
 export function ProgramsPage() {
   const { data } = useSnapshot(); const [query, setQuery] = useState(""); const [category, setCategory] = useState("all");

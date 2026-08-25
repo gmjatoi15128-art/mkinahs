@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const admin = readFileSync(new URL("../client/src/pages/Admin.tsx", import.meta.url), "utf8");
 const workspaces = readFileSync(new URL("../client/src/components/CmsWorkspaces.tsx", import.meta.url), "utf8");
 const routes = readFileSync(new URL("../client/src/App.tsx", import.meta.url), "utf8");
+const publicPages = readFileSync(new URL("../client/src/pages/PublicPages.tsx", import.meta.url), "utf8");
 
 describe("CMS management workflow safeguards", () => {
   it("keeps guided settings non-destructive and exposes all configured homepage settings", () => {
@@ -19,6 +20,11 @@ describe("CMS management workflow safeguards", () => {
     expect(workspaces).toContain("id: draft.id");
     expect(workspaces).toContain("Update page");
     expect(routes).toContain('<Route path="/:slug" component={CmsContentPage} />');
+  });
+
+  it("keeps unknown CMS page slugs on the genuine 404 path", () => {
+    expect(publicPages).toContain("const pageExists = Boolean(data?.pages.some(page => page.slug === slug))");
+    expect(publicPages).toContain("if (!isLoading && !pageExists) return <NotFound />");
   });
 
   it("derives a valid server record slug for every guided content module", () => {
