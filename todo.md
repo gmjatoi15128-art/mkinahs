@@ -88,4 +88,4 @@
 - [x] Add targeted regression assertions for key route-specific institutional fallback messages, then re-run checks and save a fresh checkpoint.
 - [x] Replace the remaining programme detail unavailable-state wording and validate all unavailable-detail messages use the final institutional style.
 - [x] Visually validate the remaining Student Life content page with the revised institutional messaging before final checkpointing.
-- [ ] Save a fresh checkpoint after route-specific public-copy assertions, unavailable-detail refinements, and final route validation.
+- [x] Save a fresh checkpoint after route-specific public-copy assertions, unavailable-detail refinements, and final route validation.
