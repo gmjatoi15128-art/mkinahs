@@ -82,3 +82,5 @@
 - [x] Add ticker regression coverage, responsive validation, and a release checkpoint.
 - [x] Refine public-site motion and visual hierarchy with restrained institutional animations, premium hover states, and a polished navigation treatment.
 - [x] Validate desktop/mobile/reduced-motion behavior, run regressions, and save a checkpoint for the visual-polish update.
+- [x] Replace remaining public empty-state and provisional wording with consistent final institutional messaging that does not create unverified facts.
+- [ ] Validate revised public messaging across routes, run regressions, and save a checkpoint.

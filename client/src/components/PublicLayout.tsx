@@ -111,7 +111,7 @@ export function DirectoryRail({ title }: { title: keyof typeof directoryProfiles
   return <section className="directory-rail"><div className="container"><div className="directory-rail__inner"><div className="directory-rail__mark"><Icon className="h-5 w-5" /></div><div><p className="eyebrow">{profile.label}</p><p className="mt-1 text-sm text-slate-600">A focused route for verified institute information.</p></div><div className="directory-rail__steps">{profile.items.map((item, index) => <span key={item}><strong>{String(index + 1).padStart(2, "0")}</strong>{item}</span>)}</div></div></div></section>;
 }
 
-export function EmptyNotice({ title = "Information centre", description = "Verified information will be added to this section as it becomes available." }: { title?: string; description?: string }) {
+export function EmptyNotice({ title = "Information centre", description = "This information area is maintained by the institute. Please consult the contact centre for current guidance." }: { title?: string; description?: string }) {
   const label = title.toLowerCase();
   const variant = label.includes("programme") || label.includes("program") ? "academic" : label.includes("faculty") ? "faculty" : label.includes("gallery") ? "gallery" : label.includes("notice") || label.includes("article") ? "news" : label.includes("event") ? "events" : label.includes("document") || label.includes("download") ? "documents" : "general";
   const Icon = variant === "academic" ? BookOpen : variant === "faculty" ? UsersRound : variant === "gallery" ? Images : variant === "news" ? Newspaper : variant === "events" ? CalendarDays : variant === "documents" ? FileText : Stethoscope;
