@@ -104,4 +104,4 @@
 - [x] Preserve genuine 404 behavior for unknown dynamic CMS page URLs while retaining CMS-created page publishing.
 - [x] Add an authenticated preview workflow for draft and unpublished CMS content that is clearly marked and never exposes previews publicly.
 - [x] Add preview authorization and public-isolation regression coverage, validate the CMS preview controls, and save a checkpoint.
-- [ ] Save the final checkpoint containing the validated protected CMS preview workflow.
+- [x] Save the final checkpoint containing the validated protected CMS preview workflow.
