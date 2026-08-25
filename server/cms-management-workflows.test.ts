@@ -5,6 +5,10 @@ const admin = readFileSync(new URL("../client/src/pages/Admin.tsx", import.meta.
 const workspaces = readFileSync(new URL("../client/src/components/CmsWorkspaces.tsx", import.meta.url), "utf8");
 const routes = readFileSync(new URL("../client/src/App.tsx", import.meta.url), "utf8");
 const publicPages = readFileSync(new URL("../client/src/pages/PublicPages.tsx", import.meta.url), "utf8");
+const preview = readFileSync(new URL("../client/src/pages/CmsPreview.tsx", import.meta.url), "utf8");
+const router = readFileSync(new URL("./routers.ts", import.meta.url), "utf8");
+const database = readFileSync(new URL("./db.ts", import.meta.url), "utf8");
+const serverSeo = readFileSync(new URL("./_core/seo.ts", import.meta.url), "utf8");
 
 describe("CMS management workflow safeguards", () => {
   it("keeps guided settings non-destructive and exposes all configured homepage settings", () => {
@@ -30,5 +34,22 @@ describe("CMS management workflow safeguards", () => {
   it("derives a valid server record slug for every guided content module", () => {
     expect(admin).toContain("const recordSlug = draft.slug.trim() || slugify(draft.title)");
     expect(admin).toContain("slug: recordSlug");
+  });
+
+  it("keeps draft preview data behind authenticated CMS access and away from public snapshot queries", () => {
+    expect(router).toContain("preview: adminProcedure.input");
+    expect(router).toContain("getCmsPreviewRecord(input.target, input.id)");
+    expect(database).toContain("export async function getCmsPreviewRecord");
+    expect(database).toContain("where(eq(programs.status, published))");
+    expect(database).toContain("where(eq(pages.status, published))");
+    expect(preview).toContain("Private CMS preview — this content is not public until you publish it.");
+  });
+
+  it("registers protected, noindex preview pages before the public dynamic page route", () => {
+    expect(routes.indexOf('<Route path="/cms-preview/:target/:id" component={CmsPreview} />')).toBeGreaterThan(-1);
+    expect(routes.indexOf('<Route path="/cms-preview/:target/:id" component={CmsPreview} />')).toBeLessThan(routes.indexOf('<Route path="/:slug" component={CmsContentPage} />'));
+    expect(serverSeo).toContain('rawPath.startsWith("/cms-preview/")');
+    expect(workspaces).toContain("/cms-preview/pages/${page.id}");
+    expect(admin).toContain("/cms-preview/${module}/${record.id}");
   });
 });

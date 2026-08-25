@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Admin from "@/pages/Admin";
 import CmsAccess from "@/pages/CmsAccess";
+import CmsPreview from "@/pages/CmsPreview";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import {
@@ -49,6 +50,7 @@ function Router() {
     <Route path="/cms-login" component={CmsAccess} />
     <Route path="/cms-setup" component={CmsAccess} />
     <Route path="/admin" component={Admin} />
+    <Route path="/cms-preview/:target/:id" component={CmsPreview} />
     <Route path="/:slug" component={CmsContentPage} />
     <Route path="/404" component={NotFound} />
     <Route component={NotFound} />

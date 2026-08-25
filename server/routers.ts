@@ -5,6 +5,7 @@ import {
   createCmsUser,
   findPublishedBySlug,
   getAdminOverview,
+  getCmsPreviewRecord,
   getCmsUserByEmail,
   getDb,
   getPublicSnapshot,
@@ -25,6 +26,7 @@ import { clinicalTraining, downloads, events, facilities, faculty, galleryCatego
 import { eq } from "drizzle-orm";
 
 const moduleSchema = z.enum(cmsModules);
+const previewTargetSchema = z.enum([...cmsModules, "pages"]);
 const contentStatusSchema = z.enum(["draft", "published", "scheduled", "archived"]);
 const recordSchema = z.object({
   id: z.number().int().positive().optional(),
@@ -152,6 +154,7 @@ export const appRouter = router({
   cms: router({
     overview: adminProcedure.query(() => getAdminOverview()),
     list: adminProcedure.input(z.object({ module: moduleSchema })).query(({ input }) => listModule(input.module)),
+    preview: adminProcedure.input(z.object({ target: previewTargetSchema, id: z.number().int().positive() })).query(({ input }) => getCmsPreviewRecord(input.target, input.id)),
     save: adminProcedure.input(z.object({ module: moduleSchema, record: recordSchema })).mutation(({ input }) => saveModuleRecord(input.module, input.record)),
     setStatus: adminProcedure.input(z.object({ module: moduleSchema, id: z.number().int().positive(), status: contentStatusSchema })).mutation(({ input }) => updateModuleStatus(input.module, input.id, input.status)),
     savePage: adminProcedure.input(z.object({ id: z.number().int().positive().optional(), slug: z.string().min(1).max(160), title: z.string().min(2).max(250), sections: z.unknown(), status: contentStatusSchema, sortOrder: z.number().int().min(0), seoTitle: z.string().max(250).optional().nullable(), seoDescription: z.string().max(1000).optional().nullable(), ogImageUrl: z.string().max(1000).optional().nullable(), canonicalUrl: z.string().max(1000).optional().nullable(), indexable: z.boolean() })).mutation(async ({ input }) => {

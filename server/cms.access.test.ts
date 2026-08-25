@@ -24,6 +24,7 @@ describe("CMS access controls", () => {
   it("blocks an ordinary authenticated user from the CMS overview", async () => {
     const caller = appRouter.createCaller(createContext("user"));
     await expect(caller.cms.overview()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(caller.cms.preview({ target: "programs", id: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("blocks a Content Manager from Super Admin-only website settings", async () => {

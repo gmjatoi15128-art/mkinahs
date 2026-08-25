@@ -54,7 +54,7 @@ export async function buildSeoHead(req: Request) {
     else meta = { title: `${record.title} | ${siteName}`, description: description(record.description, `Event information from ${siteName}.`), canonicalPath: rawPath, indexable: true, ogType: "website", image: record.imageUrl || undefined, article: { published: record.publishedAt, updated: record.updatedAt } };
   }
 
-  if (rawPath === "/admin" || rawPath.startsWith("/admin/") || rawPath === "/cms-login" || rawPath === "/cms-setup") meta = { title: `CMS | ${siteName}`, description: "Secure content management workspace.", canonicalPath: rawPath, indexable: false, ogType: "website" };
+  if (rawPath === "/admin" || rawPath.startsWith("/admin/") || rawPath.startsWith("/cms-preview/") || rawPath === "/cms-login" || rawPath === "/cms-setup") meta = { title: `CMS | ${siteName}`, description: "Secure content management workspace.", canonicalPath: rawPath, indexable: false, ogType: "website" };
   if (!meta) { meta = { title: `Page not found | ${siteName}`, description: `The requested page is not available from ${siteName}.`, canonicalPath: rawPath, indexable: false, ogType: "website" }; notFound = true; }
   if (seoRecord) meta = { ...meta, title: compact(seoRecord.title, meta.title), description: description(seoRecord.description, meta.description), indexable: seoRecord.indexable, image: seoRecord.ogImageUrl || meta.image, canonicalPath: seoRecord.canonicalUrl || meta.canonicalPath };
 

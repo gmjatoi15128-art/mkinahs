@@ -34,6 +34,7 @@ export const cmsModules = [
 ] as const;
 
 export type CmsModule = (typeof cmsModules)[number];
+export type CmsPreviewTarget = CmsModule | "pages";
 export type ContentStatus = "draft" | "published" | "scheduled" | "archived";
 
 export function publishedOnly<T extends { status: ContentStatus }>(records: T[]) {
@@ -202,6 +203,26 @@ export async function listModule(module: CmsModule) {
     case "events": return db.select().from(events).orderBy(asc(events.sortOrder));
     case "downloads": return db.select().from(downloads).orderBy(asc(downloads.sortOrder));
   }
+}
+
+/**
+ * Returns one CMS record for the authenticated preview workflow. This is deliberately
+ * separate from public snapshot/detail helpers, which remain published-only.
+ */
+export async function getCmsPreviewRecord(target: CmsPreviewTarget, id: number): Promise<any | null> {
+  const db = await getDb();
+  if (!db) return null;
+  if (target === "pages") return (await db.select().from(pages).where(eq(pages.id, id)).limit(1))[0] ?? null;
+  if (target === "programs") return (await db.select().from(programs).where(eq(programs.id, id)).limit(1))[0] ?? null;
+  if (target === "faculty") return (await db.select().from(faculty).where(eq(faculty.id, id)).limit(1))[0] ?? null;
+  if (target === "facilities") return (await db.select().from(facilities).where(eq(facilities.id, id)).limit(1))[0] ?? null;
+  if (target === "clinicalTraining") return (await db.select().from(clinicalTraining).where(eq(clinicalTraining.id, id)).limit(1))[0] ?? null;
+  if (target === "hospitalAffiliations") return (await db.select().from(hospitalAffiliations).where(eq(hospitalAffiliations.id, id)).limit(1))[0] ?? null;
+  if (target === "galleryCategories") return (await db.select().from(galleryCategories).where(eq(galleryCategories.id, id)).limit(1))[0] ?? null;
+  if (target === "galleryImages") return (await db.select().from(galleryImages).where(eq(galleryImages.id, id)).limit(1))[0] ?? null;
+  if (target === "newsArticles") return (await db.select().from(newsArticles).where(eq(newsArticles.id, id)).limit(1))[0] ?? null;
+  if (target === "events") return (await db.select().from(events).where(eq(events.id, id)).limit(1))[0] ?? null;
+  return (await db.select().from(downloads).where(eq(downloads.id, id)).limit(1))[0] ?? null;
 }
 
 export async function getAdminOverview() {
