@@ -150,6 +150,15 @@ export async function listCmsUsers() {
   return db.select().from(users).where(eq(users.loginMethod, "cms")).orderBy(asc(users.createdAt));
 }
 
+export async function safePublicQuery<T>(label: string, query: PromiseLike<T>, fallback: T): Promise<T> {
+  try {
+    return await query;
+  } catch (error) {
+    console.error(`[Database] Public ${label} query failed; using an empty fallback`, error);
+    return fallback;
+  }
+}
+
 export async function getPublicSnapshot() {
   const db = await getDb();
   if (!db) {
@@ -161,19 +170,19 @@ export async function getPublicSnapshot() {
 
   const published = "published" as const;
   const [settings, publishedPages, publicPrograms, publicFaculty, publicFacilities, publicTraining, affiliations, categories, images, news, publishedEvents, publicDownloads, seo] = await Promise.all([
-    db.select().from(siteSettings).orderBy(asc(siteSettings.label)),
-    db.select().from(pages).where(eq(pages.status, published)).orderBy(asc(pages.sortOrder)),
-    db.select().from(programs).where(eq(programs.status, published)).orderBy(asc(programs.sortOrder)),
-    db.select().from(faculty).where(eq(faculty.status, published)).orderBy(asc(faculty.sortOrder)),
-    db.select().from(facilities).where(eq(facilities.status, published)).orderBy(asc(facilities.sortOrder)),
-    db.select().from(clinicalTraining).where(eq(clinicalTraining.status, published)).orderBy(asc(clinicalTraining.sortOrder)),
-    db.select().from(hospitalAffiliations).where(eq(hospitalAffiliations.status, published)).orderBy(asc(hospitalAffiliations.sortOrder)),
-    db.select().from(galleryCategories).where(eq(galleryCategories.status, published)).orderBy(asc(galleryCategories.sortOrder)),
-    db.select().from(galleryImages).where(eq(galleryImages.status, published)).orderBy(asc(galleryImages.sortOrder)),
-    db.select().from(newsArticles).where(eq(newsArticles.status, published)).orderBy(asc(newsArticles.sortOrder)),
-    db.select().from(events).where(eq(events.status, published)).orderBy(asc(events.sortOrder)),
-    db.select().from(downloads).where(eq(downloads.status, published)).orderBy(asc(downloads.sortOrder)),
-    db.select().from(seoSettings),
+    safePublicQuery("site settings", db.select().from(siteSettings).orderBy(asc(siteSettings.label)), []),
+    safePublicQuery("pages", db.select().from(pages).where(eq(pages.status, published)).orderBy(asc(pages.sortOrder)), []),
+    safePublicQuery("programs", db.select().from(programs).where(eq(programs.status, published)).orderBy(asc(programs.sortOrder)), []),
+    safePublicQuery("faculty", db.select().from(faculty).where(eq(faculty.status, published)).orderBy(asc(faculty.sortOrder)), []),
+    safePublicQuery("facilities", db.select().from(facilities).where(eq(facilities.status, published)).orderBy(asc(facilities.sortOrder)), []),
+    safePublicQuery("clinical training", db.select().from(clinicalTraining).where(eq(clinicalTraining.status, published)).orderBy(asc(clinicalTraining.sortOrder)), []),
+    safePublicQuery("hospital affiliations", db.select().from(hospitalAffiliations).where(eq(hospitalAffiliations.status, published)).orderBy(asc(hospitalAffiliations.sortOrder)), []),
+    safePublicQuery("gallery categories", db.select().from(galleryCategories).where(eq(galleryCategories.status, published)).orderBy(asc(galleryCategories.sortOrder)), []),
+    safePublicQuery("gallery images", db.select().from(galleryImages).where(eq(galleryImages.status, published)).orderBy(asc(galleryImages.sortOrder)), []),
+    safePublicQuery("news", db.select().from(newsArticles).where(eq(newsArticles.status, published)).orderBy(asc(newsArticles.sortOrder)), []),
+    safePublicQuery("events", db.select().from(events).where(eq(events.status, published)).orderBy(asc(events.sortOrder)), []),
+    safePublicQuery("downloads", db.select().from(downloads).where(eq(downloads.status, published)).orderBy(asc(downloads.sortOrder)), []),
+    safePublicQuery("SEO settings", db.select().from(seoSettings), []),
   ]);
   return { settings, pages: publishedOnly(publishedPages), programs: publishedOnly(publicPrograms), faculty: publishedOnly(publicFaculty), facilities: publishedOnly(publicFacilities), clinicalTraining: publishedOnly(publicTraining), affiliations: publishedOnly(affiliations), galleryCategories: publishedOnly(categories), galleryImages: publishedOnly(images), news: publishedOnly(news), events: publishedOnly(publishedEvents), downloads: publishedOnly(publicDownloads), seo };
 }

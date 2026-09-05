@@ -124,3 +124,19 @@
 - [x] Visually verify the authenticated mobile CMS drawer opens, closes after a section selection, and preserves the refined workspace controls.
 - [x] Save the final checkpoint after the authenticated mobile CMS verification and completed checklist update.
 - [x] Save a fresh final checkpoint that includes the fully completed checklist state.
+
+- [x] Audit current runtime errors, public routes, CMS workflows, backend contracts, production build, and export dependencies.
+- [x] Repair verified bugs without exposing credentials or damaging database-backed CMS content.
+- [x] Add or extend regression coverage for each repair and validate a production build.
+- [x] Document Manus export options and the required external backend, database, auth, storage, and environment configuration.
+- [x] Save and deliver a final export-ready checkpoint.
+
+- [x] Remove the clearly labelled stale admissions-banner QA text from database-backed CMS settings without changing approved institute settings.
+- [x] Resolve and regression-test any active runtime/query error found during the fresh audit, distinguishing stale logs from current failures.
+- [x] Add an export handoff document that explains the backend architecture, required environment variables, database migration/data handoff, authentication, storage, and deployment steps outside Manus.
+
+- [x] Make public snapshot and SEO rendering resilient to an isolated CMS table query failure while preserving published-only filtering and visible server diagnostics.
+
+- [x] Add a direct regression that forces one public CMS table query to fail and confirms the remaining published snapshot data survives with an empty fallback.
+- [x] Add a server/SEO regression confirming crawler HTML and metadata still render when one public snapshot query fails.
+- [x] Re-run checks, tests, and production build after the resilience regressions, then finalize the export-ready checkpoint.

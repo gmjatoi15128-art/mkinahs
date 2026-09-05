@@ -40,9 +40,9 @@ function staticMeta(path: string, siteName: string): SeoShape | null {
   return route ? { title: route[0], description: route[1], canonicalPath: path, indexable: true, ogType: "website" } : null;
 }
 
-export async function buildSeoHead(req: Request) {
+export async function buildSeoHead(req: Request, resolvedSnapshot?: Awaited<ReturnType<typeof getPublicSnapshot>>) {
   const rawPath = req.originalUrl.split("?")[0].replace(/\/+$/, "") || "/";
-  const snapshot = await getPublicSnapshot();
+  const snapshot = resolvedSnapshot ?? await getPublicSnapshot();
   const identity = snapshot.settings.find(setting => setting.key === "identity")?.value as Record<string, unknown> | undefined;
   const siteName = compact(identity?.name, "MK Institute of Nursing and Allied Health Sciences");
   const seoRecord = snapshot.seo.find(record => record.path === rawPath);
