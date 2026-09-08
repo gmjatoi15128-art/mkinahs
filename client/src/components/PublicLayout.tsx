@@ -4,8 +4,9 @@ import { ArrowRight, BookOpen, CalendarDays, ChevronRight, FileText, Globe2, Ima
 import { asObject, asString, settingMap, type SettingsRow } from "@/lib/content";
 import { hasApprovedContactAction, selectPressReleases, shouldShowAdmissionsBanner, type PressReleaseRecord } from "@/lib/publicEnhancements";
 import { trpc } from "@/lib/trpc";
+import { backendUrl } from "@/lib/runtime";
 
-const logoFallback = "/manus-storage/mk-institute-logo_f730d5c4.png";
+const logoFallback = backendUrl("/manus-storage/mk-institute-logo_f730d5c4.png");
 const mainNavigation = [["Home", "/"], ["About", "/about"], ["Programs", "/programs"], ["Admissions", "/admissions"], ["Campus", "/facilities"], ["Clinical Training", "/clinical-training"], ["News & Events", "/news"], ["Gallery", "/gallery"], ["Contact", "/contact"]] as const;
 type SeoRecord = { path: string; title?: string | null; description?: string | null; ogImageUrl?: string | null; canonicalUrl?: string | null; indexable?: boolean };
 type PublicLayoutProps = { children: React.ReactNode; settings?: SettingsRow[]; seo?: SeoRecord[]; pressReleases?: PressReleaseRecord[]; title?: string; description?: string; breadcrumbs?: string[] };
@@ -62,7 +63,7 @@ export function PublicLayout({ children, settings, seo: seoRecords, pressRelease
   const identity = asObject(settingValues.identity);
   const contact = asObject(settingValues.contact);
   const name = asString(identity.name, "MK Institute of Nursing and Allied Health Sciences");
-  const logoUrl = asString(identity.logoUrl, logoFallback);
+  const logoUrl = backendUrl(asString(identity.logoUrl, logoFallback));
   const phone = asString(contact.phone);
   const email = asString(contact.email);
   const whatsapp = asString(contact.whatsapp);

@@ -26,6 +26,22 @@ function isoDate(value: Date | null | undefined) {
 export async function createApp(options: { development?: boolean; server?: Server } = {}) {
   const app = express();
   app.set("trust proxy", 1);
+  app.use((req, res, next) => {
+    const origin = String(req.headers.origin || "");
+    const configuredOrigins = String(process.env.FRONTEND_ORIGINS || "https://mkinahs.vercel.app")
+      .split(",")
+      .map(value => value.trim().replace(/\/$/, ""))
+      .filter(Boolean);
+    if (origin && configuredOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Vary", "Origin");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    }
+    if (req.method === "OPTIONS") return res.sendStatus(204);
+    next();
+  });
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);

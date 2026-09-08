@@ -3,16 +3,11 @@
   "buildCommand": "pnpm build:vercel",
   "outputDirectory": "dist/public",
   "framework": "vite",
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 60
-    }
-  },
+  "redirects": [
+    { "source": "/robots.txt", "destination": "https://mkinstitut-k6f3dinp.manus.space/robots.txt", "permanent": false },
+    { "source": "/sitemap.xml", "destination": "https://mkinstitut-k6f3dinp.manus.space/sitemap.xml", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api" },
-    { "source": "/manus-storage/:path*", "destination": "/api" },
-    { "source": "/robots.txt", "destination": "/api" },
-    { "source": "/sitemap.xml", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
