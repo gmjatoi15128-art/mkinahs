@@ -140,3 +140,6 @@
 - [x] Add a direct regression that forces one public CMS table query to fail and confirms the remaining published snapshot data survives with an empty fallback.
 - [x] Add a server/SEO regression confirming crawler HTML and metadata still render when one public snapshot query fails.
 - [x] Re-run checks, tests, and production build after the resilience regressions, then finalize the export-ready checkpoint.
+
+- [x] Fix the confirmed Vercel deployment so mkinahs.vercel.app serves the React application instead of exposing the bundled server source.
+- [x] Add Vercel-compatible frontend routing and backend entrypoint configuration, then validate the Vercel build and public/CMS routes.
