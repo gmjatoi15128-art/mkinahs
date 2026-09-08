@@ -147,4 +147,4 @@
 - [x] Configure the Vercel frontend to use the Manus backend API, CMS authentication, database, and storage instead of a second Vercel backend.
 - [x] Add safe cross-origin/session configuration for the Vercel frontend and preserve same-origin Manus behavior.
 - [x] Validate frontend API calls, CMS login/session behavior, storage URLs, and the Vercel production build across both domains.
-- [ ] Save the Manus-backend/Vercel-frontend release checkpoint.
+- [x] Save the Manus-backend/Vercel-frontend release checkpoint.
