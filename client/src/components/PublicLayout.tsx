@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ArrowRight, BookOpen, CalendarDays, ChevronRight, FileText, Globe2, Images, Mail, MapPin, Menu, Newspaper, Phone, Stethoscope, UsersRound, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, BookOpen, CalendarDays, ChevronRight, FileText, Globe2, Images, Mail, MapPin, Menu, Newspaper, Phone, RefreshCw, Stethoscope, UsersRound, X } from "lucide-react";
 import { asObject, asString, settingMap, type SettingsRow } from "@/lib/content";
 import { hasApprovedContactAction, selectPressReleases, shouldShowAdmissionsBanner, type PressReleaseRecord } from "@/lib/publicEnhancements";
 import { trpc } from "@/lib/trpc";
@@ -95,6 +95,10 @@ export function PublicLayout({ children, settings, seo: seoRecords, pressRelease
     {hasApprovedContactActions ? <aside aria-label="Quick contact actions" className="fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-2 lg:flex">{phone ? <a href={`tel:${phone}`} className="flex items-center gap-2 rounded-full bg-navy px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-teal-800"><Phone className="h-4 w-4" />Call</a> : null}{whatsapp ? <a href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`} className="flex items-center gap-2 rounded-full bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-emerald-800"><Stethoscope className="h-4 w-4" />WhatsApp</a> : null}</aside> : null}
     <div className={`fixed inset-x-0 bottom-0 z-50 grid border-t border-slate-200 bg-white p-2 shadow-[0_-8px_30px_rgba(15,23,42,0.09)] lg:hidden ${phone && whatsapp ? "grid-cols-3" : hasApprovedContactActions ? "grid-cols-2" : "grid-cols-1"}`}>{phone ? <a href={`tel:${phone}`} className="mobile-action"><Phone className="h-4 w-4" />Call</a> : null}{whatsapp ? <a href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`} className="mobile-action"><Stethoscope className="h-4 w-4" />WhatsApp</a> : null}<Link href="/admissions" className="mobile-action bg-navy text-white">Admissions</Link></div>
   </div>;
+}
+
+export function BackendErrorNotice({ title = "Information is temporarily unavailable", onRetry }: { title?: string; onRetry?: () => void }) {
+  return <section className="public-section" role="alert" aria-live="assertive"><div className="container"><div className="backend-error-panel"><div className="backend-error-panel__icon"><AlertTriangle className="h-5 w-5" /></div><div className="min-w-0 flex-1"><p className="eyebrow text-amber-800">Connection issue</p><h2 className="mt-1 text-xl font-bold text-navy">{title}</h2><p className="mt-2 text-sm leading-6 text-slate-600">The latest institute information could not be loaded. Please try again, or return shortly.</p></div>{onRetry ? <button type="button" onClick={onRetry} className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-navy px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"><RefreshCw className="h-4 w-4" />Try again</button> : null}</div></div></section>;
 }
 
 export function PageHero({ eyebrow, title, description }: { eyebrow?: string; title: string; description?: string }) {

@@ -148,3 +148,9 @@
 - [x] Add safe cross-origin/session configuration for the Vercel frontend and preserve same-origin Manus behavior.
 - [x] Validate frontend API calls, CMS login/session behavior, storage URLs, and the Vercel production build across both domains.
 - [x] Save the Manus-backend/Vercel-frontend release checkpoint.
+
+- [x] Add smooth, accessible loading animations for frontend requests to the Manus backend.
+- [x] Add clear, actionable frontend error messages and retry states for public and CMS-facing backend queries.
+- [x] Add regression coverage, validate reduced-motion and responsive states, and save a loading/error refinement checkpoint.
+
+- [x] Save the final loading/error-handling refinement checkpoint.
