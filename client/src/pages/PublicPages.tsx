@@ -39,26 +39,182 @@ export function ProgramsPage() {
   const filtered = (data?.programs ?? []).filter(program => (category === "all" || program.category === category) && [program.name, program.overview, program.eligibility].join(" ").toLowerCase().includes(query.toLowerCase()));
   return <Page title="Programs" description="Published programme information."><PageHero title="Programs" eyebrow="Academic pathways" description="Explore published programme information, duration, eligibility, and career direction." /><section className="public-section"><div className="container"><div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row"><label className="relative flex-1"><Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" /><input value={query} onChange={event => setQuery(event.target.value)} className="field-input pl-10" placeholder="Search published programs" /></label><label className="relative md:w-56"><Filter className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" /><select value={category} onChange={event => setCategory(event.target.value)} className="field-input pl-10"><option value="all">All categories</option>{categories.map(item => <option key={item} value={item}>{item}</option>)}</select></label></div>{filtered.length ? <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{filtered.map(program => <article key={program.id} className="program-card"><p className="eyebrow">{program.category || "Programme"}</p><h2 className="mt-3 text-xl font-bold text-navy">{program.name}</h2><p className="mt-4 line-clamp-3 text-sm leading-6 text-slate-600">{program.overview || "Programme information is available from the institute’s academic information centre."}</p><dl className="mt-6 border-t border-slate-100 pt-4 text-sm"><div className="flex justify-between gap-3"><dt className="text-slate-500">Duration</dt><dd className="font-semibold">{program.duration || "Not specified"}</dd></div></dl><Link href={`/programs/${program.slug}`} className="text-link mt-6">View details <ArrowRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-8"><EmptyNotice title="Programme directory" description="The public programme directory has no listings at this time. Please contact the institute for current admissions guidance." /></div>}</div></section></Page>;
 }
-
 export function ProgramDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { data: program, isLoading, isError, refetch } = trpc.public.detail.useQuery({ type: "program", slug: slug || "" }, { enabled: Boolean(slug) });
-  return <Page title={program?.name || "Program"} breadcrumbs={["Programs", program?.name || "Program"]}>
-    {isLoading ? <PublicRouteLoading title="Programme information" /> : isError ? <BackendErrorNotice onRetry={() => void refetch()} /> : program ? <>
-      <PageHero title={program.name} eyebrow={program.category || "Programme"} description={program.overview || "Programme information"} />
-      <section className="public-section"><div className="container grid gap-8 lg:grid-cols-[1.25fr_.75fr]">
-        <article className="prose prose-slate max-w-none">
-          <h2>Overview</h2><p>{program.overview || "This programme profile does not include an overview."}</p>
-          <h2>Learning outcomes</h2>
-          {asStringArray(program.learningOutcomes).length ? <ul>{asStringArray(program.learningOutcomes).map(item => <li key={item}>{item}</li>)}</ul> : <p>Learning outcomes are not included in this public profile.</p>}
-          <h2>Clinical training</h2><p>{program.clinicalTraining || "Clinical-learning details are not included in this public profile."}</p>
-          <h2>Career direction</h2><p>{program.careerDirection || "Career-direction details are not included in this public profile."}</p>
-        </article>
-        <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-6"><h2 className="font-bold text-navy">Programme details</h2><dl className="mt-5 grid gap-4 text-sm"><Detail term="Duration" definition={program.duration || "Not specified"} /><Detail term="Eligibility" definition={program.eligibility || "Not specified"} /></dl><Link href="/admissions" className="btn-primary mt-7 w-full justify-center">Admissions Information</Link></aside>
-      </div></section>
-    </> : <><PageHero title="Program information" /><section className="public-section"><div className="container"><EmptyNotice title="Programme unavailable" description="This programme is not available in the public directory. Please return to Programs or contact the institute for current admissions guidance." /></div></section></>}
-  </Page>;
+
+  const {
+    data: program,
+    isLoading,
+    isError,
+    refetch,
+  } = trpc.public.detail.useQuery(
+    { type: "program", slug: slug || "" },
+    { enabled: Boolean(slug) }
+  );
+
+  const learningOutcomes = asStringArray(program?.learningOutcomes);
+
+  const contentCards = [
+    {
+      title: "Overview",
+      icon: BookOpen,
+      content:
+        program?.overview ||
+        "This programme profile does not include an overview.",
+    },
+    {
+      title: "Learning outcomes",
+      icon: Stethoscope,
+      content: learningOutcomes,
+    },
+    {
+      title: "Clinical training",
+      icon: UsersRound,
+      content:
+        program?.clinicalTraining ||
+        "Clinical-learning details are not included in this public profile.",
+    },
+    {
+      title: "Career direction",
+      icon: ArrowRight,
+      content:
+        program?.careerDirection ||
+        "Career-direction details are not included in this public profile.",
+    },
+  ];
+
+  return (
+    <Page
+      title={program?.name || "Program"}
+      breadcrumbs={["Programs", program?.name || "Program"]}
+    >
+      {isLoading ? (
+        <PublicRouteLoading title="Programme information" />
+      ) : isError ? (
+        <BackendErrorNotice onRetry={() => void refetch()} />
+      ) : program ? (
+        <>
+          <PageHero
+            title={program.name}
+            eyebrow={program.category || "Programme"}
+            description={program.overview || "Programme information"}
+          />
+
+          <section className="public-section">
+            <div className="container">
+              <div className="grid gap-6 md:grid-cols-2">
+                {contentCards.map((card) => {
+                  const Icon = card.icon;
+                  const isList = Array.isArray(card.content);
+
+                  return (
+                    <article
+                      key={card.title}
+                      className="group rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-teal-50 text-teal-700 ring-1 ring-teal-100">
+                          <Icon className="h-6 w-6" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="eyebrow">Programme information</p>
+                          <h2 className="mt-1 text-xl font-bold text-navy">
+                            {card.title}
+                          </h2>
+                        </div>
+                      </div>
+
+                      {isList ? (
+                        learningOutcomes.length ? (
+                          <ul className="mt-6 grid gap-3">
+                            {learningOutcomes.map((item) => (
+                              <li
+                                key={item}
+                                className="flex gap-3 text-sm leading-6 text-slate-600"
+                              >
+                                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-teal-600" />
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="mt-6 text-sm leading-7 text-slate-600">
+                            Learning outcomes are not included in this public
+                            profile.
+                          </p>
+                        )
+                      ) : (
+                        <p className="mt-6 whitespace-pre-wrap text-sm leading-7 text-slate-600">
+                          {card.content as string}
+                        </p>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_.7fr]">
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-7">
+                  <p className="eyebrow">Programme details</p>
+                  <h2 className="mt-2 text-xl font-bold text-navy">
+                    At a glance
+                  </h2>
+
+                  <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+                    <Detail
+                      term="Duration"
+                      definition={program.duration || "Not specified"}
+                    />
+                    <Detail
+                      term="Eligibility"
+                      definition={program.eligibility || "Not specified"}
+                    />
+                  </dl>
+                </div>
+
+                <aside className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+                  <p className="eyebrow">Next step</p>
+                  <h2 className="mt-2 text-xl font-bold text-navy">
+                    Ready to explore admissions?
+                  </h2>
+
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    Review the institute’s admissions information for current
+                    guidance and requirements.
+                  </p>
+
+                  <Link
+                    href="/admissions"
+                    className="btn-primary mt-6 w-full justify-center"
+                  >
+                    Admissions Information
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </aside>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : (
+        <>
+          <PageHero title="Program information" />
+
+          <section className="public-section">
+            <div className="container">
+              <EmptyNotice
+                title="Programme unavailable"
+                description="This programme is not available in the public directory. Please return to Programs or contact the institute for current admissions guidance."
+              />
+            </div>
+          </section>
+        </>
+      )}
+    </Page>
+  );
 }
+
+
 
 export function AdmissionsPage() { const steps = [["01", "Check Eligibility"], ["02", "Prepare Documents"], ["03", "Contact Admissions"], ["04", "Follow Admission Procedure"], ["05", "Complete Enrollment"]]; return <Page title="Admissions" description="Admissions information and five-step process."><PageHero title="Admissions Information" eyebrow="Your next steps" description="This page is informational. It does not include an online application form." /><section className="public-section"><div className="container"><p className="eyebrow">Admissions process</p><h2 className="section-title">A clear, five-step process</h2><div className="mt-10 grid gap-4 md:grid-cols-5">{steps.map(([number, label]) => <div key={number} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><span className="text-3xl font-extrabold text-teal-700">{number}</span><h3 className="mt-8 font-bold text-navy">{label}</h3></div>)}</div><div className="mt-10"><EmptyNotice title="Admissions guidance" description="For current programme availability, requirements, dates, fees, and prospectus guidance, please contact the institute’s admissions office." /></div><div className="mt-8 flex flex-wrap gap-3"><Link href="/programs" className="btn-primary">View published programs <ArrowRight className="h-4 w-4" /></Link><Link href="/contact" className="btn-secondary">Contact admissions</Link></div></div></section></Page>; }
 
