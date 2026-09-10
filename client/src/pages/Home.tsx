@@ -498,8 +498,10 @@ export default function Home() {
               </h2>
 
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-200 sm:text-base">
-                {asString(
-                  homepageSections.clinicalTrainingDescription,
-                  asString(
-                    clinical.description,
-                    "Bu
+{asString(
+  homepageSections.clinicalTrainingDescription,
+  asString(
+    clinical.description,
+    "Build practical confidence through supervised learning and exposure to real healthcare environments."
+  )
+)}
