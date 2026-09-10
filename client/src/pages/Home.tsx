@@ -498,10 +498,278 @@ export default function Home() {
               </h2>
 
               <p className="mt-5 max-w-xl text-sm leading-7 text-slate-200 sm:text-base">
-{asString(
-  homepageSections.clinicalTrainingDescription,
-  asString(
-    clinical.description,
-    "Build practical confidence through supervised learning and exposure to real healthcare environments."
-  )
-)}
+                {asString(
+                  homepageSections.clinicalTrainingDescription,
+                  asString(
+                    clinical.description,
+                    "Build practical confidence through supervised learning and exposure to real healthcare environments."
+                  )
+                )}
+              </p>
+
+              <Link href="/clinical-training" className="btn-gold mt-7">
+                Clinical training details
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="relative">
+              <div className="absolute -inset-10 rounded-full bg-teal-300/10 blur-3xl" />
+              {gallery[0]?.mediaUrl ? (
+                <img
+                  src={gallery[0].mediaUrl}
+                  alt="Clinical learning"
+                  className="relative aspect-[4/3] w-full rounded-[2rem] object-cover shadow-2xl"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="relative flex aspect-[4/3] items-center justify-center rounded-[2rem] border border-white/10 bg-white/5">
+                  <HeartPulse className="h-20 w-20 text-teal-200" />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* NEWS */}
+        <section className="public-section bg-slate-50">
+          <div className="container">
+            <SectionIntro
+              eyebrow="Information hub"
+              title="Latest News & Notices"
+              description="Stay informed with institute announcements, academic information, and important updates."
+              link={{ href: "/news", label: "View all news" }}
+            />
+
+            {latestNews.length ? (
+              <div className="mt-9 grid gap-5 md:grid-cols-3">
+                {latestNews.map((article) => (
+                  <article
+                    key={article.id}
+                    className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="rounded-full bg-teal-50 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.12em] text-teal-800">
+                        {article.category || "Notice"}
+                      </span>
+                      <span className="text-xs text-slate-500">
+                        {dateLabel(article.publishedAt)}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-5 text-lg font-bold text-navy">
+                      {article.title}
+                    </h3>
+
+                    <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">
+                      {article.excerpt ||
+                        "Read the full published notice for details."}
+                    </p>
+
+                    <Link
+                      href={`/news/${article.slug}`}
+                      className="text-link mt-5"
+                    >
+                      Read notice
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-8">
+                <EmptyNotice
+                  title="No notices published yet"
+                  description="New institute announcements and academic notices will appear here when published."
+                />
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* EVENTS */}
+        <section className="public-section">
+          <div className="container">
+            <SectionIntro
+              eyebrow="Institute calendar"
+              title="Upcoming Events"
+              description="Keep track of upcoming institute activities, academic events, and seminars."
+              link={{ href: "/events", label: "View all events" }}
+            />
+
+            {upcomingEvents.length ? (
+              <div className="mt-9 grid gap-5 md:grid-cols-3">
+                {upcomingEvents.map((event) => (
+                  <article
+                    key={event.id}
+                    className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+                  >
+                    <CalendarDays className="h-6 w-6 text-teal-700" />
+                    <p className="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                      {dateLabel(event.startsAt)}
+                    </p>
+                    <h3 className="mt-2 text-lg font-bold text-navy">
+                      {event.title}
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-600">
+                      {event.location ||
+                        "Location details will be published."}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-8 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-7 text-center">
+                <CalendarDays className="mx-auto h-7 w-7 text-teal-700" />
+                <p className="mt-3 font-bold text-navy">No public events yet</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Upcoming events will be displayed here when published.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* FINAL CTA */}
+        <section className="container pb-12 pt-4">
+          <div className="relative overflow-hidden rounded-[2rem] bg-navy px-6 py-10 sm:px-10 lg:px-12">
+            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
+            <div className="absolute -bottom-36 left-1/2 h-72 w-72 rounded-full border border-teal-300/10" />
+
+            <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_auto]">
+              <div>
+                <p className="eyebrow text-gold-200">Your future in healthcare</p>
+                <h2 className="academic-display mt-3 max-w-2xl text-3xl text-white sm:text-4xl">
+                  Ready to Begin Your Journey?
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+                  Explore our programs and review the institute’s published
+                  admissions information.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link href="/programs" className="btn-gold justify-center">
+                  Explore Programs
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  href="/admissions"
+                  className="btn-ghost-light justify-center"
+                >
+                  Admissions Information
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CONTACT */}
+        <section className="public-section pt-2">
+          <div className="container grid gap-8 rounded-[2rem] border border-slate-200 bg-white p-7 shadow-sm lg:grid-cols-[.9fr_1.1fr] lg:p-10">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="h-px w-10 bg-gold-400" />
+                <p className="eyebrow">Contact & location</p>
+              </div>
+              <h2 className="section-title mt-3">Plan Your Visit</h2>
+              <p className="section-copy">
+                Find the institute’s official contact channels and visit
+                information.
+              </p>
+
+              <Link href="/contact" className="text-link mt-6">
+                Visit contact centre
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {contactLines.length ? (
+                contactLines.map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl bg-slate-50 p-5"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                      {item.label}
+                    </p>
+                    <p className="mt-2 break-words text-sm font-semibold text-navy">
+                      {item.value}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl bg-slate-50 p-5 sm:col-span-2">
+                  <p className="text-sm leading-6 text-slate-600">
+                    Official contact details will appear here when published
+                    through the CMS.
+                  </p>
+                </div>
+              )}
+
+              <div className="rounded-2xl bg-teal-50 p-5 sm:col-span-2">
+                <div className="flex items-start gap-3">
+                  <MapPinned className="mt-0.5 h-5 w-5 text-teal-700" />
+                  <div>
+                    <p className="font-bold text-navy">MK Institute</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      Pano Akil, Sindh
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </PublicLayout>
+  );
+}
+
+function LoadingGrid() {
+  return (
+    <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {[0, 1, 2, 3, 4, 5].map((item) => (
+        <div
+          key={item}
+          className="h-72 animate-pulse rounded-3xl bg-slate-200"
+        />
+      ))}
+    </div>
+  );
+}
+
+function SectionIntro({
+  eyebrow,
+  title,
+  description,
+  link,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  link?: { href: string; label: string };
+}) {
+  return (
+    <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="max-w-3xl">
+        <div className="flex items-center gap-3">
+          <span className="h-px w-8 bg-gold-400" />
+          <p className="eyebrow">{eyebrow}</p>
+        </div>
+
+        <h2 className="section-title mt-3">{title}</h2>
+        <p className="section-copy">{description}</p>
+      </div>
+
+      {link ? (
+        <Link href={link.href} className="text-link shrink-0">
+          {link.label}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      ) : null}
+    </div>
+  );
+}
