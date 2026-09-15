@@ -7,7 +7,17 @@ import App from "./App";
 import { backendUrl } from "./lib/runtime";
 import "./index.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Public content is CMS-managed. Refetching regularly means a visitor who
+      // keeps a page open receives published updates without a hard refresh.
+      staleTime: 30_000,
+      refetchInterval: 60_000,
+      refetchOnWindowFocus: true,
+    },
+  },
+});
 
 const trpcClient = trpc.createClient({
   links: [

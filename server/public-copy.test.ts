@@ -22,7 +22,7 @@ describe("public institutional messaging", () => {
     expect(publicPages).toContain("Events calendar");
     expect(publicPages).toContain("For current programme availability, requirements, dates, fees, and prospectus guidance");
     expect(publicPages).toContain("Public contact details are not listed at this time");
-    expect(home).toContain("Explore academic pathways, institute information, and admissions guidance.");
+    expect(home).toContain("Explore approved institute information, academic pathways, and admissions guidance.");
   });
 
   it("keeps an explicit Home destination in the shared public navigation", () => {
