@@ -45,7 +45,7 @@ describe("public institutional messaging", () => {
       "Public contact details are not listed at this time"
     );
     expect(home).toContain(
-      "Explore academic pathways, institute information, and admissions guidance."
+      "Build your knowledge, develop your skills, and prepare for a meaningful future in healthcare."
     );
   });
 
