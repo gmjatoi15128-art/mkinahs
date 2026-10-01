@@ -1,63 +1,237 @@
 import { Link } from "wouter";
-import { ArrowRight, BookOpenCheck, CalendarDays, ChevronRight, ClipboardList, GraduationCap, HeartPulse, Images, MapPinned, Newspaper, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpenCheck,
+  GraduationCap,
+  HeartPulse,
+  Microscope,
+  ShieldCheck,
+  Stethoscope,
+  UsersRound,
+} from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { asObject, asObjectArray, asString, dateLabel, settingMap } from "@/lib/content";
-import { EmptyNotice, PublicLayout } from "@/components/PublicLayout";
+import { asObject, asObjectArray, asString, settingMap } from "@/lib/content";
+import { PublicLayout } from "@/components/PublicLayout";
+
+const fallbackPrograms = [
+  ["BS Nursing", "4 Years · 8 Semesters", Stethoscope],
+  ["Health Technician", "18 Months", HeartPulse],
+  ["Laboratory Technician", "1 Year", Microscope],
+  ["OT Technician", "1 Year", ShieldCheck],
+  ["Dispenser", "1 Year", BookOpenCheck],
+  ["Dental Technician", "1 Year", UsersRound],
+];
 
 export default function Home() {
-  const { data, isLoading } = trpc.public.snapshot.useQuery();
+  const { data } = trpc.public.snapshot.useQuery();
   const settings = settingMap(data?.settings);
   const hero = asObject(settings.hero);
   const about = asObject(settings.homepage_about);
   const contact = asObject(settings.contact);
-  const homePage = data?.pages.find(page => page.slug === "home");
-  const homepageSections = asObject(homePage?.sections);
-  const trustItems = asObjectArray(homepageSections.trustItems);
-  const benefitItems = asObjectArray(homepageSections.benefitItems);
-  const leadership = asObject(homepageSections.leadership);
-  const headline = asString(hero.headline, "Begin Your Journey in Nursing");
-  const heroDescription = asString(hero.description, "Explore academic pathways, institute information, and admissions guidance.");
-  const sections = data?.pages ?? [];
-  const pageSection = (slug: string) => asObject(sections.find(page => page.slug === slug)?.sections);
-  const clinical = pageSection("clinical-training");
-  const studentLife = pageSection("student-life");
+  const home = data?.pages?.find((page) => page.slug === "home");
+  const sections = asObject(home?.sections);
+  const programs = data?.programs?.length ? data.programs.slice(0, 6) : null;
   const gallery = data?.galleryImages ?? [];
-  const upcomingEvents = (data?.events ?? []).filter(event => event.eventStatus === "upcoming").slice(0, 3);
-  const latestNews = (data?.news ?? []).slice(0, 3);
-  const contactLines = [{ label: "Address", value: asString(contact.address) }, { label: "Phone", value: asString(contact.phone) }, { label: "Email", value: asString(contact.email) }, { label: "Office hours", value: asString(contact.officeHours) }].filter(item => item.value);
+  const heroImage = asString(hero.imageUrl) || asString(about.imageUrl) || gallery[0]?.mediaUrl || "";
 
-  return <PublicLayout settings={data?.settings} seo={data?.seo} title="Home">
-    <main>
-      <section className="hero-surface overflow-hidden"><div className="container relative grid min-h-[570px] items-center gap-10 py-20 lg:grid-cols-[1.2fr_.8fr] lg:py-24"><div className="relative z-10"><p className="eyebrow text-teal-200">{asString(hero.eyebrow, "Nursing & Allied Health Education")}</p><h1 className="academic-display mt-5 max-w-3xl text-balance text-5xl leading-[1.08] text-white sm:text-6xl">{headline}</h1><p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">{heroDescription}</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/programs" className="btn-gold">{asString(hero.primaryCtaLabel, "Explore Programs")} <ArrowRight className="h-4 w-4" /></Link><Link href="/admissions" className="btn-ghost-light">{asString(hero.secondaryCtaLabel, "Admissions Information")}</Link></div></div><div className="relative mx-auto hidden w-full max-w-sm lg:block"><div className="absolute -inset-8 rounded-full bg-teal-400/15 blur-3xl" /><div className="relative rounded-[2rem] border border-white/15 bg-white/10 p-7 backdrop-blur-sm"><div className="flex h-[330px] flex-col items-center justify-center rounded-2xl border border-white/15 bg-navy/50 p-8 text-center"><div className="grid h-24 w-24 place-items-center rounded-full border border-gold-300/60 bg-white/5"><GraduationCap className="h-11 w-11 text-gold-300" /></div><p className="mt-8 text-xs font-bold uppercase tracking-[0.18em] text-teal-200">MK Institute</p><p className="mt-3 max-w-xs text-sm leading-6 text-slate-200">Official academic and admissions information for prospective learners and their families.</p></div></div></div></div></section>
+  return (
+    <PublicLayout settings={data?.settings} seo={data?.seo} title="Home">
+      <main>
+        <section className="relative overflow-hidden bg-[#062b33]">
+          {heroImage ? (
+            <img src={heroImage} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />
+          ) : null}
+          <div className="absolute inset-0 bg-[#062b33]/90" />
+          <div className="container relative z-10 grid min-h-[620px] items-center gap-10 py-16 lg:grid-cols-2">
+            <div>
+              <p className="eyebrow text-teal-200">
+                {asString(hero.eyebrow, "Nursing & Allied Health Education")}
+              </p>
+              <h1 className="academic-display mt-5 text-5xl leading-tight text-white sm:text-6xl">
+                {asString(hero.headline, "Begin Your Journey in Nursing")}
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">
+                {asString(hero.description, "Build your knowledge, develop your skills, and prepare for a meaningful future in healthcare.")}
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link href="/programs" className="btn-gold justify-center">
+                  {asString(hero.primaryCtaLabel, "Explore Programs")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/admissions" className="btn-ghost-light justify-center">
+                  {asString(hero.secondaryCtaLabel, "Admissions Information")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <div className="hidden lg:block">
+              <div className="rounded-[2rem] border border-white/15 bg-white/5 p-4 backdrop-blur-sm">
+                {heroImage ? (
+                  <img src={heroImage} alt="MK Institute" className="h-[410px] w-full rounded-[1.5rem] object-cover" />
+                ) : (
+                  <div className="flex h-[410px] flex-col items-center justify-center rounded-[1.5rem] border border-white/10">
+                    <HeartPulse className="h-16 w-16 text-gold-200" />
+                    <p className="mt-5 text-sm text-slate-200">Nursing & Allied Health Education</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <section className="border-b border-slate-200 bg-white"><div className="container py-5">{trustItems.length ? <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{trustItems.map((item, index) => <TrustItem key={`${asString(item.title)}-${index}`} icon={index % 3 === 0 ? ShieldCheck : index % 3 === 1 ? BookOpenCheck : HeartPulse} title={asString(item.title)} />)}</div> : <p className="text-center text-sm text-slate-600">A dedicated space for institutional distinctions, academic notices, and learner support information.</p>}</div></section>
+        <section className="public-section bg-paper">
+          <div className="container grid items-center gap-10 lg:grid-cols-2">
+            <div className="overflow-hidden rounded-[2rem] bg-slate-100">
+              {about.imageUrl || gallery[1]?.mediaUrl ? (
+                <img
+                  src={asString(about.imageUrl, gallery[1]?.mediaUrl || "")}
+                  alt="MK Institute"
+                  className="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="flex aspect-[4/3] items-center justify-center">
+                  <GraduationCap className="h-16 w-16 text-teal-700" />
+                </div>
+              )}
+            </div>
+            <div>
+              <p className="eyebrow">About MKINHS</p>
+              <h2 className="section-title mt-3">
+                {asString(about.title, "Education for a Healthier Tomorrow")}
+              </h2>
+              <p className="section-copy">
+                {asString(
+                  about.description,
+                  "MK Institute of Nursing and Allied Health Sciences is committed to quality healthcare education, practical learning, and professional development."
+                )}
+              </p>
+              <Link href="/about" className="text-link mt-7">
+                {asString(about.ctaLabel, "Discover MKINHS")}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
 
-      <section className="public-section"><div className="container grid items-center gap-10 lg:grid-cols-[.8fr_1.2fr]"><div className="relative overflow-hidden rounded-3xl bg-slate-100 p-8"><div className="absolute right-6 top-6 h-24 w-24 rounded-full border border-gold-300/70" /><GraduationCap className="relative h-12 w-12 text-teal-700" /><p className="relative mt-16 max-w-xs text-sm leading-6 text-slate-600">Explore the institute’s official profile, academic direction, and published information.</p></div><div><p className="eyebrow">About MK Institute</p><h2 className="section-title">{asString(about.title, "About MK Institute")}</h2><p className="section-copy">{asString(about.description, "Discover the institute through its official profile and published information centre.")}</p><Link href="/about" className="text-link">{asString(about.ctaLabel, "Learn More")} <ArrowRight className="h-4 w-4" /></Link></div></div></section>
+        <section className="public-section bg-slate-50">
+          <div className="container">
+            <p className="eyebrow">Academic pathways</p>
+            <h2 className="section-title mt-3">Our Programs</h2>
+            <p className="section-copy">Explore healthcare programs designed to develop knowledge, practical skills, and professional confidence.</p>
+            <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {(programs ?? fallbackPrograms).map((item, index) => {
+                const fallback = fallbackPrograms[index];
+                const program = programs ? item : null;
+                const name = program ? asString(program.name, fallback[0] as string) : fallback[0] as string;
+                const duration = program ? asString(program.duration, fallback[1] as string) : fallback[1] as string;
+                const slug = program ? asString(program.slug, name.toLowerCase().replace(/\s+/g, "-")) : name.toLowerCase().replace(/\s+/g, "-");
+                const Icon = program ? [Stethoscope, HeartPulse, Microscope, ShieldCheck, BookOpenCheck, UsersRound][index] : fallback[2];
+                return (
+                  <article key={slug} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <div className="grid h-11 w-11 place-items-center rounded-2xl bg-teal-50 text-teal-700">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="mt-5 text-xl font-bold text-navy">{name}</h3>
+                    <p className="mt-2 text-sm text-slate-500">{duration}</p>
+                    <Link href={`/programs/${slug}`} className="text-link mt-5">
+                      View program <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-      <section className="public-section bg-slate-50"><div className="container"><SectionIntro eyebrow="Academic pathways" title="Programs" description="Explore published programme information, eligibility, duration, and learning pathways." link={{ href: "/programs", label: "View all programs" }} />{isLoading ? <LoadingGrid /> : data?.programs?.length ? <div className="mt-10 flex snap-x gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:overflow-visible">{data.programs.map(program => <article key={program.id} className="program-card min-w-[280px] snap-start"><p className="eyebrow">{program.category || "Programme"}</p><h3 className="mt-4 text-xl font-bold text-navy">{program.name}</h3><dl className="mt-5 grid gap-2 text-sm"><div className="flex justify-between gap-4"><dt className="text-slate-500">Duration</dt><dd className="text-right font-semibold text-slate-700">{program.duration || "Not specified"}</dd></div><div className="flex justify-between gap-4"><dt className="text-slate-500">Eligibility</dt><dd className="max-w-[60%] text-right font-semibold text-slate-700">{program.eligibility || "Not specified"}</dd></div></dl><p className="mt-5 line-clamp-3 text-sm leading-6 text-slate-600">{program.overview || "This programme profile does not include an overview."}</p><Link className="text-link mt-6" href={`/programs/${program.slug}`}>View details <ChevronRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-10"><EmptyNotice title="Programme directory" description="The public programme directory has no listings at this time. Please contact the institute for current admissions guidance." /></div>}</div></section>
+        <section className="public-section bg-navy text-white">
+          <div className="container grid gap-8 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p className="eyebrow text-teal-200">Why MKINHS</p>
+              <h2 className="academic-display mt-3 text-4xl sm:text-5xl">Learn. Practice. Grow.</h2>
+              <p className="mt-5 max-w-2xl text-slate-200 leading-8">
+                {asString(sections.whyChooseDescription, "A focused learning environment combining academic knowledge, practical skills, and professional development.")}
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ["Clinical Learning", Stethoscope],
+                ["Professional Education", GraduationCap],
+                ["Skills-Based Training", Microscope],
+                ["Student Support", UsersRound],
+              ].map(([title, Icon]) => (
+                <div key={title as string} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                  <Icon className="h-6 w-6 text-gold-200" />
+                  <h3 className="mt-4 font-bold">{title as string}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="public-section"><div className="container"><SectionIntro eyebrow="Institutional priorities" title="Why choose MK" description="Published institutional priorities and learning-support information." /> <div className="mt-10">{benefitItems.length ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">{benefitItems.map((item, index) => <article key={`${asString(item.title)}-${index}`} className="program-card"><ShieldCheck className="h-6 w-6 text-teal-700" /><h3 className="mt-6 text-lg font-bold text-navy">{asString(item.title)}</h3><p className="mt-3 text-sm leading-6 text-slate-600">{asString(item.description)}</p></article>)}</div> : <EmptyNotice title="Institutional priorities" description="For current information about the institute’s academic environment and learner support, please contact the institute." />}</div></div></section>
+        <section className="public-section bg-paper">
+          <div className="container">
+            <p className="eyebrow">Clinical training</p>
+            <h2 className="section-title mt-3">Learn Beyond the Classroom</h2>
+            <p className="section-copy max-w-3xl">
+              {asString(
+                sections.clinicalTrainingDescription,
+                "Build practical confidence through supervised learning and exposure to real healthcare environments."
+              )}
+            </p>
+            <Link href="/clinical-training" className="btn-gold mt-7">
+              Clinical training details <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
 
-      <FeatureSection eyebrow="Learning in practice" title="Clinical training" description={asString(homepageSections.clinicalTrainingDescription, asString(clinical.description, "Explore published training and affiliation information."))} icon={HeartPulse} href="/clinical-training" label="View clinical training" hasContent={Boolean(homepageSections.clinicalTrainingDescription) || Boolean(clinical.description)} />
-      <FeatureSection eyebrow="Learning environments" title="Campus & facilities" description={asString(homepageSections.facilitiesDescription, "Explore published information about learning spaces and campus facilities.")} icon={MapPinned} href="/facilities" label="Explore campus" hasContent={Boolean(homepageSections.facilitiesDescription)} reverse />
-      <FeatureSection eyebrow="Leadership" title={asString(leadership.title, "Principal / leadership")} description={asString(leadership.message, "Read the published institutional profile and leadership information.")} icon={GraduationCap} href="/about" label="Learn about MK" hasContent={Boolean(leadership.title) || Boolean(leadership.message)} />
-      <FeatureSection eyebrow="Community" title="Student life" description={asString(homepageSections.studentLifeDescription, asString(studentLife.description, "Discover student-life information as it is added to the official information centre."))} icon={Images} href="/student-life" label="Explore student life" hasContent={Boolean(homepageSections.studentLifeDescription) || Boolean(studentLife.description)} reverse />
+        <section className="public-section bg-slate-50">
+          <div className="container">
+            <p className="eyebrow">Stay informed</p>
+            <h2 className="section-title mt-3">Latest Notices</h2>
+            <div className="mt-7 grid gap-4 md:grid-cols-3">
+              {(data?.news ?? []).slice(0, 3).map((news) => (
+                <article key={news.id} className="rounded-2xl border border-slate-200 bg-white p-5">
+                  <h3 className="font-bold text-navy">{news.title}</h3>
+                  <p className="mt-3 text-sm text-slate-600">{asString(news.excerpt, "")}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <section className="public-section bg-slate-50"><div className="container"><SectionIntro eyebrow="Information hub" title="Latest news & notices" description="Read officially published notices, academic information, and announcements." link={{ href: "/news", label: "View all news" }} />{latestNews.length ? <div className="mt-10 grid gap-5 md:grid-cols-3">{latestNews.map(article => <article key={article.id} className="news-card"><p className="eyebrow">{article.category}</p><p className="mt-3 text-sm text-slate-500">{dateLabel(article.publishedAt)}</p><h3 className="mt-2 text-lg font-bold text-navy">{article.title}</h3><p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{article.excerpt || "A public summary is not included with this notice."}</p><Link href={`/news/${article.slug}`} className="text-link mt-5">View details <ChevronRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-10"><EmptyNotice title="News & notices" description="There are no public notices at this time. Please check the institute’s contact centre for current information." /></div>}</div></section>
+        <section className="public-section bg-[#062b33] text-white">
+          <div className="container text-center">
+            <p className="eyebrow text-teal-200">Start your next chapter</p>
+            <h2 className="academic-display mt-3 text-4xl sm:text-5xl">Explore Your Healthcare Career Path</h2>
+            <p className="mx-auto mt-5 max-w-2xl text-slate-200 leading-8">
+              Learn about our programs and admissions information.
+            </p>
+            <Link href="/admissions" className="btn-gold mt-7">
+              Admissions Information <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
 
-      <section className="public-section"><div className="container"><SectionIntro eyebrow="Calendar" title="Upcoming events" description="Review currently listed institute events and seminars." link={{ href: "/events", label: "View all events" }} />{upcomingEvents.length ? <div className="mt-10 grid gap-5 md:grid-cols-3">{upcomingEvents.map(event => <article key={event.id} className="news-card"><CalendarDays className="h-6 w-6 text-teal-700" /><p className="mt-5 text-sm text-slate-500">{dateLabel(event.startsAt)}</p><h3 className="mt-2 text-lg font-bold text-navy">{event.title}</h3><p className="mt-3 text-sm text-slate-600">{event.location || "Location details are not specified."}</p><Link href={`/events/${event.slug}`} className="text-link mt-5">View event <ChevronRight className="h-4 w-4" /></Link></article>)}</div> : <div className="mt-10"><EmptyNotice title="Events calendar" description="There are no public events listed at this time. Please contact the institute for current calendar information." /></div>}</div></section>
-
-      <section className="public-section bg-slate-50"><div className="container"><SectionIntro eyebrow="Campus moments" title="Gallery" description="Browse published images from the institute." link={{ href: "/gallery", label: "View gallery" }} />{gallery.length ? <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">{gallery.slice(0, 8).map(image => <img key={image.id} src={image.mediaUrl} loading="lazy" alt={image.altText || image.caption || "Gallery image"} className="aspect-square rounded-2xl object-cover shadow-sm" />)}</div> : <div className="mt-10"><EmptyNotice title="Gallery" description="The public gallery does not contain images at this time. Please return later for institute updates." /></div>}</div></section>
-
-      <section className="container py-10"><div className="admissions-panel"><div><p className="eyebrow text-gold-200">Admissions</p><h2 className="mt-4 text-3xl font-extrabold text-white">Begin Your Journey in Nursing</h2><p className="mt-4 max-w-xl leading-7 text-slate-200">Explore the institute’s published admissions guidance and programme information.</p></div><div className="flex flex-col gap-3 sm:flex-row"><Link className="btn-gold" href="/admissions">Admissions Information <ArrowRight className="h-4 w-4" /></Link><Link className="btn-ghost-light" href="/contact">Contact Admissions</Link></div></div></section>
-
-      <section className="public-section"><div className="container grid gap-8 lg:grid-cols-[.8fr_1.2fr]"><div><p className="eyebrow">Contact & location</p><h2 className="section-title">Plan your visit</h2><p className="section-copy">Find approved contact channels, campus location, and visit information through the institute’s contact centre.</p></div><div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">{contactLines.length ? <div className="grid gap-4 text-sm">{contactLines.map(item => <ContactLine key={item.label} label={item.label} value={item.value} />)}</div> : <p className="text-sm leading-6 text-slate-600">For current contact and visit guidance, please use the institute’s official contact centre.</p>}<Link href="/contact" className="text-link mt-7">Visit contact centre <ArrowRight className="h-4 w-4" /></Link></div></div></section>
-    </main>
-  </PublicLayout>;
+        <section className="public-section bg-paper">
+          <div className="container">
+            <p className="eyebrow">Contact</p>
+            <h2 className="section-title mt-3">Get in Touch</h2>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {[
+                ["Address", asString(contact.address)],
+                ["Phone", asString(contact.phone)],
+                ["Email", asString(contact.email)],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5">
+                  <p className="text-xs font-bold uppercase tracking-wider text-teal-700">{label}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-700">{value || "Please contact the institute for details."}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
+    </PublicLayout>
+  );
 }
-
-function TrustItem({ icon: Icon, title }: { icon: typeof ShieldCheck; title: string }) { return <div className="flex items-center gap-3 rounded-xl px-3 py-2"><Icon className="h-5 w-5 text-teal-700" /><span className="text-sm font-semibold text-navy">{title}</span></div>; }
-function ContactLine({ label, value }: { label: string; value: string }) { return <div className="flex justify-between gap-4 border-b border-slate-100 pb-3 last:border-0"><span className="text-slate-500">{label}</span><span className="max-w-[65%] text-right font-semibold text-slate-700">{value}</span></div>; }
-function LoadingGrid() { return <div className="mt-10 grid gap-5 md:grid-cols-3">{[0, 1, 2].map(item => <div key={item} className="h-64 animate-pulse rounded-2xl bg-slate-200" />)}</div>; }
-function SectionIntro({ eyebrow, title, description, link }: { eyebrow: string; title: string; description: string; link?: { href: string; label: string } }) { return <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="eyebrow">{eyebrow}</p><h2 className="section-title">{title}</h2><p className="section-copy">{description}</p></div>{link ? <Link href={link.href} className="text-link shrink-0">{link.label} <ArrowRight className="h-4 w-4" /></Link> : null}</div>; }
-function FeatureSection({ eyebrow, title, description, icon: Icon, href, label, hasContent, reverse }: { eyebrow: string; title: string; description: string; icon: typeof HeartPulse; href: string; label: string; hasContent: boolean; reverse?: boolean }) { return <section className="public-section"><div className={`container grid items-center gap-10 lg:grid-cols-2 ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}><div className="relative overflow-hidden rounded-3xl bg-navy p-10 text-white"><div className="absolute right-6 top-6 h-20 w-20 rounded-full border border-gold-300/50" /><Icon className="relative h-10 w-10 text-gold-300" /><div className="relative mt-16 rounded-2xl border border-white/15 bg-white/5 p-5 text-sm leading-6 text-slate-300">{hasContent ? "Explore the current information available through this section." : "This information area is maintained by the institute. Please use the contact centre for current guidance."}</div></div><div><p className="eyebrow">{eyebrow}</p><h2 className="section-title">{title}</h2><p className="section-copy">{description}</p><Link href={href} className="text-link">{label} <ArrowRight className="h-4 w-4" /></Link></div></div></section>; }
